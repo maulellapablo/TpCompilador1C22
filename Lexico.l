@@ -19,14 +19,14 @@ DIGITO			[0-9]
 LETRA			[a-zA-Z]
 
 CTE		        {DIGITO}+
-ID			{LETRA}({LETRA}|{DIGITO})*
+ID			    {LETRA}({LETRA}|{DIGITO})*
 OP_AS   		":""="
-OP_SUM		        "+"
-OP_MUL                  "*"
-OP_RES		        "-"
-OP_DIV                  "/"
-PA			"("
-PC			")"
+OP_SUM		     "+"
+OP_MUL           "*"
+OP_RES		     "-"
+OP_DIV           "/"
+PA		     	 "("
+PC			     ")"
 
 %%
 
