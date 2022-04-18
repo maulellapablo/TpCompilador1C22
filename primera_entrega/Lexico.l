@@ -33,8 +33,8 @@ ID				{LETRA}({LETRA}|{DIGITO})*
 CTE_ENTERA		-?{DIGITO}+
 CTE_REAL		-?({DIGITO})*"."({DIGITO})+
 COMILLAS		"\""
-COM_INI			"\*/" 
-COM_FIN			"\/*"
+COM_INI			"\-/" 
+COM_FIN			"\/-"
 CARACTERES		({LETRA}|\@|\!|\$|\%|\&|\/|\(|\)|\=|\\|\?)
 ESPACIO			" "
 CTE_STRING		{COMILLAS}({CARACTERES}|{DIGITO}|{ESPACIO})+{COMILLAS}
