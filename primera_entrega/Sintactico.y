@@ -42,8 +42,8 @@ void escribirEnTablaSimbolos();
 %token READ
 %token BETWEEN
 %token INLIST
-%token DIM
-%token AS
+%token DECVAR
+%token ENDDEC
 %token COMP_IGUAL
 %token COMP_MAYOR
 %token COMP_MENOR
@@ -54,7 +54,6 @@ void escribirEnTablaSimbolos();
 %token TIPO_INT
 %token TIPO_FLOAT
 %token TIPO_STRING
-%token CONTAR
 %token <num>CTE_ENTERA
 %token <real>CTE_REAL
 %token <str>CTE_STRING
@@ -91,7 +90,7 @@ zona_declaracion:	declaraciones;
 declaraciones:	declaracion
 				|declaraciones declaracion;
 
-declaracion:	DIM { printf("***** Inicio declaracion de variables *****\n"); } COR_A lista_var COR_C  AS COR_A  lista_tipo COR_C{validarSintaxisDeclaracion(contadorTipos,contadorId); printf("*****\n Fin declaracion de variables *****\n");};
+declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } COR_A lista_var COR_C  ENDDEC COR_A  lista_tipo COR_C{validarSintaxisDeclaracion(contadorTipos,contadorId); printf("*****\n Fin declaracion de variables *****\n");};
 
 
 lista_var:		ID {strcpy(matrizVariables[contadorId],yylval.strid) ;  contadorId++; }
@@ -115,8 +114,7 @@ sentencia:		asignacion { printf(" - asignacion - OK \n"); }
 				|seleccion { printf(" - seleccion - OK \n"); }
 				|ciclo { printf(" - ciclo - OK \n"); }
 				|entrada { printf(" - entrada - OK \n"); }
-				|salida { printf(" - salida - OK \n"); }
-				|contar { printf(" - contar - OK \n"); };
+				|salida { printf(" - salida - OK \n"); };
 
 ciclo:			WHILE PAR_A condicion PAR_C LLAVE_A bloque LLAVE_C;
        
@@ -129,7 +127,9 @@ seleccion: 		IF  PAR_A condicion PAR_C THEN bloque ENDIF
 condicion:		comparacion 
 				|comparacion OP_LOG_AND comparacion
 				|comparacion OP_LOG_OR comparacion	
-				|comparacion OP_LOG_NOT comparacion; 
+				|comparacion OP_LOG_NOT comparacion
+				|inlist { printf(" - inlist - OK \n"); };
+				|between { printf(" - between - OK \n"); };
 
 comparacion:	expresion COMP_IGUAL expresion
 				|expresion COMP_MAYOR expresion	
@@ -142,12 +142,13 @@ comparacion:	expresion COMP_IGUAL expresion
 expresion:		expresion { printf(" expresion"); } OP_MAS termino { printf(" termino"); }
 				|expresion { printf(" expresion"); }OP_MENOS termino { printf(" termino"); }
 				|termino { printf(" termino"); };
-				  
-contar:			ID OPAR_ASIG CONTAR PAR_A factor PUN_Y_COM COR_A lista_a_contar COR_C PAR_C
+				
+inlist:			INLIST PAR_A ID PUN_Y_COM COR_A lista_expresiones COR_C PAR_C;
 
-lista_a_contar:	lista_a_contar COMA factor
-				| factor
-                    ;
+lista_expresiones:	lista_expresiones PUN_Y_COM expresion
+                    | expresion;
+					
+between:		BETWEEN PAR_A ID COMA COR_A expresion PUN_Y_COM expresion COR_C PAR_C;
 
 termino:		termino OP_MULT factor { printf(" factor"); }
 				|termino OP_DIV factor { printf(" factor"); }
