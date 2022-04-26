@@ -8,10 +8,10 @@
 |_float3                       |float          |                                |        |
 |_1                            |               |1                               |        |
 |_2.1                          |               |2.1                             |        |
-|_"Ojala compile"              |               |"Ojala compile"                 |10      |
+|_"Ojala compile"              |               |"Ojala compile"                 |13      |
 |_valorTeclado                 |               |                                |        |
-|_"Condicion verdadera"        |               |"Condicion verdadera"           |10      |
-|_"Condicion falsa"            |               |"Condicion falsa"               |10      |
-|_"Parece que anda"            |               |"Parece que anda"               |10      |
+|_"Condicion verdadera"        |               |"Condicion verdadera"           |19      |
+|_"Condicion falsa"            |               |"Condicion falsa"               |15      |
+|_"Parece que anda"            |               |"Parece que anda"               |15      |
 |_2                            |               |2                               |        |
 |_4                            |               |4                               |        |

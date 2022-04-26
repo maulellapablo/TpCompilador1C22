@@ -1,24 +1,23 @@
 program
--/ Asi son los comentarios en 1er Cuatri LyC 2022!@# /-
 dim  [int1,int2,float1,cadena,float2] as  [int,int,float,string,float] 
 dim  [float3] as [float]
 
 int1 := 1
 int2 := 1 + int1
 float1 := 2.1
-cadena := "Ojala compile"
+cadena := "valor de la cadena"
 
-get valorTeclado
+read valorTeclado
 if (int1 > int2)
 then
-	display "Condicion verdadera"
+	write "Condicion verdadera"
 endif
 
 if (int1 < int2)
 then
-	display "Condicion verdadera"
+	write "Condicion verdadera"
 else
-	display "Condicion falsa"
+	write "Condicion falsa"
 endif
 
 while (int1 > int2)
@@ -26,6 +25,6 @@ while (int1 > int2)
 	cadena := "Parece que anda"
 }
 
-int2 := contar(2;[2,2,2,4])
+int2 := inlist(2;[2,2,2,4])
 
 end 

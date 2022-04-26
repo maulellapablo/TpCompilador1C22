@@ -33,8 +33,8 @@ ID				{LETRA}({LETRA}|{DIGITO})*
 CTE_ENTERA		-?{DIGITO}+
 CTE_REAL		-?({DIGITO})*"."({DIGITO})+
 COMILLAS		"\""
-COM_INI			"\-/" 
-COM_FIN			"/\-"
+COM_INI			"-/" 
+COM_FIN			"/-"
 CARACTERES		({LETRA}|\@|\!|\$|\%|\&|\/|\(|\)|\=|\\|\?)
 ESPACIO			" "
 CTE_STRING		{COMILLAS}({CARACTERES}|{DIGITO}|{ESPACIO})+{COMILLAS}
@@ -51,10 +51,10 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 "endif"			{ return ENDIF;}
 "while"			{ return WHILE; }
 "else"			{ return ELSE; }
-"display"		{ return DISPLAY; }
-"get"			{ return GET; }
 "dim"			{ return DIM; } 
 "as"			{ return AS; }
+"read"			{ return READ;}
+"write"			{ return WRITE;}
 "=="			{ return COMP_IGUAL; }
 ">"				{ return COMP_MAYOR; }
 "<"				{ return COMP_MENOR; }
@@ -65,10 +65,14 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 "int"			{ return TIPO_INT;} 
 "float"			{ return TIPO_FLOAT; } 
 "string"		{ return TIPO_STRING; }
+"between"		{ return BETWEEN; }
 "contar"		{ return CONTAR; }
+
 {CTE_ENTERA}	{ validarCotaEntero(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.num = strdup(yytext); return CTE_ENTERA;}
 {CTE_REAL}		{ validarCotaReal(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.real = strdup(yytext); return CTE_REAL; }
 {CTE_STRING}	{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.real = strdup(yytext); return CTE_STRING; }
+{ID}			{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("ID",yytext); yylval.strid = strdup(yytext); return ID; }
+{COMENTARIO}	{ printf("\nComentario que sera descartado:  %s\n",yytext); }
 
 "+"				{ return OP_MAS;  }  
 "-"				{ return OP_MENOS; }
@@ -80,18 +84,17 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 ":"				{ return DOS_PUNTOS; }
 ";"				{ return PUN_Y_COM; }
 ","				{ return COMA; }
-{ID}			{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("ID",yytext); yylval.strid = strdup(yytext); return ID; }
 "("				{ return PAR_A; }
 ")"				{ return PAR_C; }
 "{"				{ return LLAVE_A; }
 "}"				{ return LLAVE_C; }
 "["				{ return COR_A; }
 "]"				{ return COR_C; }	
-{COMENTARIO}	{ printf("\nComentario que sera descartado:  %s\n",yytext); }
 
 "\n"
 "\t"
 " "
+.		{mensaje_error("Caracter invalido");}
 
 %%
 
@@ -206,6 +209,13 @@ void escribirEnTablaSimbolos(){
 int yyerror(void)
 {
 	printf("Syntax Error error\n");
+	system ("Pause");
+	exit (1);
+}
+
+int mensaje_error(char* mensaje)
+{
+	printf("Error lexico: %s\nLinea: %d\n", mensaje , yylineno);
 	system ("Pause");
 	exit (1);
 }

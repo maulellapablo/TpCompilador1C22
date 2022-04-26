@@ -36,8 +36,10 @@ void validarSintaxisDeclaracion(int, int);
 %token ENDIF
 %token ELSE
 %token WHILE
-%token DISPLAY
-%token GET
+%token WRITE
+%token READ
+%token BETWEEN
+%token INLIST
 %token DIM
 %token AS
 %token COMP_IGUAL
@@ -156,10 +158,10 @@ factor:			ID
 				|CTE_STRING 
 				|PAR_A expresion PAR_C;
  
-entrada: 		GET ID;
+entrada: 		READ ID;
 
-salida:			DISPLAY CTE_STRING 
-				|DISPLAY ID;
+salida:			WRITE CTE_STRING 
+				|WRITE ID;
           
           
 %%
