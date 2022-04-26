@@ -88,7 +88,7 @@ char * str;
 %%
 programa: PROGRAM zona_declaracion algoritmo END { printf("\n***** Compilacion exitosa: OK *****\n");};
 				  
-zona_declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } declaraciones ENDDEC {printf("*****\n Fin declaracion de variables *****\n");};
+zona_declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } declaraciones ENDDEC {printf("***** Fin declaracion de variables *****\n");};
 
 declaraciones:	declaracion
 				|declaraciones declaracion;
