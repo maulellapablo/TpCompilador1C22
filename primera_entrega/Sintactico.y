@@ -44,6 +44,8 @@ void escribirEnTablaSimbolos();
 %token INLIST
 %token DIM
 %token AS
+%token DECVAR
+%token ENDDEC
 %token COMP_IGUAL
 %token COMP_MAYOR
 %token COMP_MENOR
@@ -86,22 +88,18 @@ char * str;
 %%
 programa: PROGRAM zona_declaracion algoritmo END { printf("\n***** Compilacion exitosa: OK *****\n");};
 				  
-zona_declaracion:	declaraciones;
+zona_declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } declaraciones ENDDEC {printf("*****\n Fin declaracion de variables *****\n");};
 
 declaraciones:	declaracion
 				|declaraciones declaracion;
 
-declaracion:	DIM { printf("***** Inicio declaracion de variables *****\n"); } COR_A lista_var COR_C  AS COR_A  lista_tipo COR_C{validarSintaxisDeclaracion(contadorTipos,contadorId); printf("*****\n Fin declaracion de variables *****\n");};
-
+declaracion:	lista_var DOS_PUNTOS tipo;
 
 lista_var:		ID {strcpy(matrizVariables[contadorId],yylval.strid) ;  contadorId++; }
 				| lista_var COMA  ID {strcpy(matrizVariables[contadorId],yylval.strid) ; contadorId++;};
 
  
-lista_tipo:		lista_tipo COMA  TIPO_INT { auxTipoDato="int"; strcpy(matrizTipoDato[contadorTipos],auxTipoDato);  agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" INT"); }
-				| lista_tipo COMA  TIPO_FLOAT { auxTipoDato="float"; strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" REAL"); }
-				|lista_tipo COMA  TIPO_STRING { auxTipoDato="string"; strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" STRING"); }
-				| TIPO_INT { auxTipoDato="int"; strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" INT"); }
+tipo:			TIPO_INT { auxTipoDato="int"; strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" INT"); }
 				|TIPO_FLOAT {  auxTipoDato="float"; strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" REAL"); }
 				|TIPO_STRING { auxTipoDato="string"; strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" STRING"); };
               

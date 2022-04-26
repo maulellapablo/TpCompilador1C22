@@ -50,6 +50,8 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 "while"			{ return WHILE; }
 "else"			{ return ELSE; }
 "dim"			{ return DIM; } 
+"decvar"		{ return DECVAR; }
+"enddec"		{ return ENDDEC; }
 "as"			{ return AS; }
 "read"			{ return READ;}
 "write"			{ return WRITE;}

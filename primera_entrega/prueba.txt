@@ -1,6 +1,11 @@
 program
-dim  [int1,int2,float1,cadena,float2] as  [int,int,float,string,float] 
-dim  [float3] as [float]
+
+decvar
+	int1, int2 : int
+	cadena : STRING
+	float1, float2 : float
+	float3 : float
+enddec
 
 -/Comentario/-
 
