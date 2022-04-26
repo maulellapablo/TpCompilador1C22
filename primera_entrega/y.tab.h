@@ -50,8 +50,8 @@
      READ = 266,
      BETWEEN = 267,
      INLIST = 268,
-     DIM = 269,
-     AS = 270,
+     DECVAR = 269,
+     ENDDEC = 270,
      COMP_IGUAL = 271,
      COMP_MAYOR = 272,
      COMP_MENOR = 273,
@@ -62,27 +62,26 @@
      TIPO_INT = 278,
      TIPO_FLOAT = 279,
      TIPO_STRING = 280,
-     CONTAR = 281,
-     CTE_ENTERA = 282,
-     CTE_REAL = 283,
-     CTE_STRING = 284,
-     OP_MAS = 285,
-     OP_MENOS = 286,
-     OP_MULT = 287,
-     OP_DIV = 288,
-     OP_LOG_AND = 289,
-     OP_LOG_OR = 290,
-     OP_LOG_NOT = 291,
-     DOS_PUNTOS = 292,
-     PUN_Y_COM = 293,
-     COMA = 294,
-     ID = 295,
-     PAR_A = 296,
-     PAR_C = 297,
-     LLAVE_A = 298,
-     LLAVE_C = 299,
-     COR_A = 300,
-     COR_C = 301
+     CTE_ENTERA = 281,
+     CTE_REAL = 282,
+     CTE_STRING = 283,
+     OP_MAS = 284,
+     OP_MENOS = 285,
+     OP_MULT = 286,
+     OP_DIV = 287,
+     OP_LOG_AND = 288,
+     OP_LOG_OR = 289,
+     OP_LOG_NOT = 290,
+     DOS_PUNTOS = 291,
+     PUN_Y_COM = 292,
+     COMA = 293,
+     ID = 294,
+     PAR_A = 295,
+     PAR_C = 296,
+     LLAVE_A = 297,
+     LLAVE_C = 298,
+     COR_A = 299,
+     COR_C = 300
    };
 #endif
 /* Tokens.  */
@@ -97,8 +96,8 @@
 #define READ 266
 #define BETWEEN 267
 #define INLIST 268
-#define DIM 269
-#define AS 270
+#define DECVAR 269
+#define ENDDEC 270
 #define COMP_IGUAL 271
 #define COMP_MAYOR 272
 #define COMP_MENOR 273
@@ -109,27 +108,26 @@
 #define TIPO_INT 278
 #define TIPO_FLOAT 279
 #define TIPO_STRING 280
-#define CONTAR 281
-#define CTE_ENTERA 282
-#define CTE_REAL 283
-#define CTE_STRING 284
-#define OP_MAS 285
-#define OP_MENOS 286
-#define OP_MULT 287
-#define OP_DIV 288
-#define OP_LOG_AND 289
-#define OP_LOG_OR 290
-#define OP_LOG_NOT 291
-#define DOS_PUNTOS 292
-#define PUN_Y_COM 293
-#define COMA 294
-#define ID 295
-#define PAR_A 296
-#define PAR_C 297
-#define LLAVE_A 298
-#define LLAVE_C 299
-#define COR_A 300
-#define COR_C 301
+#define CTE_ENTERA 281
+#define CTE_REAL 282
+#define CTE_STRING 283
+#define OP_MAS 284
+#define OP_MENOS 285
+#define OP_MULT 286
+#define OP_DIV 287
+#define OP_LOG_AND 288
+#define OP_LOG_OR 289
+#define OP_LOG_NOT 290
+#define DOS_PUNTOS 291
+#define PUN_Y_COM 292
+#define COMA 293
+#define ID 294
+#define PAR_A 295
+#define PAR_C 296
+#define LLAVE_A 297
+#define LLAVE_C 298
+#define COR_A 299
+#define COR_C 300
 
 
 
@@ -149,7 +147,7 @@ char * str;
 
 
 /* Line 1676 of yacc.c  */
-#line 153 "y.tab.h"
+#line 151 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
