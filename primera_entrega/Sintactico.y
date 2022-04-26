@@ -89,7 +89,7 @@ zona_declaracion:	declaraciones;
 declaraciones:	declaracion
 				|declaraciones declaracion;
 
-declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } lista_declaracion ENDDEC {printf("*****\n Fin declaracion de variables *****\n");};
+declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } lista_declaracion ENDDEC {printf("***** Fin declaracion de variables *****\n");};
 
 lista_declaracion:	lista_var DOS_PUNTOS lista_tipo
 					| lista_declaracion lista_var DOS_PUNTOS lista_tipo
