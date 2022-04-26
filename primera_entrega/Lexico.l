@@ -49,8 +49,8 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 "endif"			{ return ENDIF;}
 "while"			{ return WHILE; }
 "else"			{ return ELSE; }
-"dim"			{ return DIM; } 
-"as"			{ return AS; }
+"decvar"		{ return DECVAR; } 
+"enddec"		{ return ENDDEC; }
 "read"			{ return READ;}
 "write"			{ return WRITE;}
 "=="			{ return COMP_IGUAL; }
@@ -64,7 +64,7 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 "float"			{ return TIPO_FLOAT; } 
 "string"		{ return TIPO_STRING; }
 "between"		{ return BETWEEN; }
-"contar"		{ return CONTAR; }
+"inlist"		{ return INLIST; }
 
 {CTE_ENTERA}	{ validarCotaEntero(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.num = strdup(yytext); return CTE_ENTERA;}
 {CTE_REAL}		{ validarCotaReal(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.real = strdup(yytext); return CTE_REAL; }
@@ -115,16 +115,6 @@ void validarCotaReal(char* str)
 		printf("ERROR! El valor ingresado para el real se encuentra fuera del rango valido\n");
 		system("Pause");
 		exit(1);	
-	}
-}
-
-void validarSintaxisDeclaracion(int cantTipos, int cantVariables)
-{
-	if(cantTipos != cantVariables)
-	{
-		printf("ERROR! Declaracion de variables incorrecta, la cantidad de tipos no coincide con la cantidad de variables\n");
-		system("Pause");
-		exit(1);
 	}
 }
 
