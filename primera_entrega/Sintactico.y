@@ -27,6 +27,8 @@ char matrizVariables[100][10];
 int contadorId = 0;
 int agregarTipoEnTablaSimbolos(char* nombre, int contadorId);
 void validarSintaxisDeclaracion(int, int);
+void mensaje_error(char*);
+void escribirEnTablaSimbolos();
 
 %}
 %token PROGRAM

@@ -20,9 +20,7 @@ struct struct_tablaSimbolos tablaSimbolos[1000];
 void validarCotaEntero(char*);
 void validarCotaReal(char*);
 void validarCotaCaracteres(char*);
-
 int guardarEnTablaSimbolos(char*, char*);
-void escribirEnTablaSimbolos();
 %}
 %option noyywrap  
 %option yylineno 
@@ -94,7 +92,6 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 "\n"
 "\t"
 " "
-.		{mensaje_error("Caracter invalido");}
 
 %%
 
