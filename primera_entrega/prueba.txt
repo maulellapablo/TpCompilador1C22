@@ -2,6 +2,8 @@ program
 dim  [int1,int2,float1,cadena,float2] as  [int,int,float,string,float] 
 dim  [float3] as [float]
 
+-/Comentario/-
+
 int1 := 1
 int2 := 1 + int1
 float1 := 2.1
