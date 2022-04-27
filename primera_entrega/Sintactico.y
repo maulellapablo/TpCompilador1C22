@@ -21,6 +21,7 @@ int yyerror();
 extern struct struct_tablaSimbolos tablaSimbolos[1000]; 
 extern int puntero_array;
 int contadorTipos = 0;
+int contadorVar = 0;
 char* auxTipoDato;
 char matrizTipoDato[100][10];
 char matrizVariables[100][10];
@@ -89,19 +90,19 @@ zona_declaracion:	declaraciones;
 declaraciones:	declaracion
 				|declaraciones declaracion;
 
-declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } lista_declaracion ENDDEC {printf("***** Fin declaracion de variables *****\n");};
+declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } lista_declaracion ENDDEC {printf("*****\n Fin declaracion de variables *****\n");};
 
 lista_declaracion:	lista_var DOS_PUNTOS lista_tipo
 					| lista_declaracion lista_var DOS_PUNTOS lista_tipo
 
 
-lista_var:		ID {strcpy(matrizVariables[contadorId],yylval.strid) ;  contadorId++; }
-				| lista_var COMA ID {strcpy(matrizVariables[contadorId],yylval.strid) ; contadorId++;};
+lista_var:		ID {strcpy(matrizVariables[contadorId],yylval.strid) ;  contadorId++;contadorVar++; }
+				| lista_var COMA ID {strcpy(matrizVariables[contadorId],yylval.strid) ; contadorId++;contadorVar++;};
 
  
-lista_tipo:		TIPO_INT { auxTipoDato="int"; strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" INT"); }
-				|TIPO_FLOAT {  auxTipoDato="float"; strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" REAL"); }
-				|TIPO_STRING { auxTipoDato="string"; strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" STRING"); };
+lista_tipo:		TIPO_INT { auxTipoDato="int"; for(int i = 0; i < contadorVar; ++i){strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" INT");} contadorVar=0; }
+				|TIPO_FLOAT {  auxTipoDato="float"; for(int i = 0; i < contadorVar; ++i){strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" REAL"); }contadorVar = 0; }
+				|TIPO_STRING { auxTipoDato="string"; for(int i = 0; i < contadorVar; ++i){strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" STRING");}contadorVar = 0; };
               
 
 algoritmo:		bloque {printf("\n***** Fin de bloque *****\n");};
