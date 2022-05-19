@@ -65,6 +65,9 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 "string"		{ return TIPO_STRING; }
 "between"		{ return BETWEEN; }
 "inlist"		{ return INLIST; }
+"and"			{ return OP_LOG_AND; }
+"or"			{ return OP_LOG_OR; }
+"not"			{ return OP_LOG_NOT; } 
 
 {CTE_ENTERA}	{ validarCotaEntero(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.num = strdup(yytext); return CTE_ENTERA;}
 {CTE_REAL}		{ validarCotaReal(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.real = strdup(yytext); return CTE_REAL; }
@@ -76,9 +79,6 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 "-"				{ return OP_MENOS; }
 "*"				{ return OP_MULT; }
 "/"				{ return OP_DIV; }
-"and"			{ return OP_LOG_AND; }
-"or"			{ return OP_LOG_OR; }
-"not"			{ return OP_LOG_NOT; } 
 ":"				{ return DOS_PUNTOS; }
 ";"				{ return PUN_Y_COM; }
 ","				{ return COMA; }
