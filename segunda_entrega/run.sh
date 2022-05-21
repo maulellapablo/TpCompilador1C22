@@ -4,11 +4,11 @@ flex Lexico.l
 
 bison -dyv Sintactico.y
 
-gcc lex.yy.c  y.tab.c -o primera 
+gcc lex.yy.c  y.tab.c -o segunda 
 
-./primera prueba.txt
+./segunda prueba.txt
 
 rm lex.yy.c
 rm y.tab.c
 rm y.tab.h
-rm primera
+rm segunda
