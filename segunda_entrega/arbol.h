@@ -14,6 +14,7 @@ typedef t_nodo* t_arbol;
 
 t_nodo* crearHoja( char* lexema);
 t_nodo* crearNodo( char* lexema, t_nodo* hijoIzq, t_nodo* hijoDer);
+void inOrden(t_arbol *pa, FILE *pIntermedia);
 
 t_nodo* crearHoja( char* lexema){
     t_nodo* nodo = (t_nodo*) malloc (sizeof(t_nodo));
@@ -38,6 +39,16 @@ t_nodo* crearNodo(char* lexema, t_nodo* hijoIzq, t_nodo* hijoDer){
     padre->der = hijoDer;
 
     return padre;
+}
+
+void inOrder(t_arbol *pa, FILE *pIntermedia)
+{
+    if(!(*pa))
+        return;
+    inOrder(&(*pa)->izq, pIntermedia);
+	printf(" %s  ", (*pa)->data);
+    fprintf(pIntermedia, " %s  ", (*pa)->data);  
+    inOrder(&(*pa)->der, pIntermedia);
 }
 
 #endif // ARBOL_H_INCLUDED

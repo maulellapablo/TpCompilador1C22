@@ -31,7 +31,10 @@ int agregarTipoEnTablaSimbolos(char* nombre, int contadorId);
 void mensaje_error(char*);
 void escribirEnTablaSimbolos();
 
+FILE *f_intermedia;
+
 // Declaración punteros arbol
+t_nodo* ptr_star; //star
 t_nodo* ptr_prog; //programa
 t_nodo* ptr_zona; //zona_declaracion
 t_nodo* ptr_decls; //declaraciones
@@ -109,42 +112,47 @@ char * str;
 }
 
 %%
-programa: PROGRAM zona_declaracion algoritmo END { printf("\n***** Compilacion exitosa: OK *****\n");};
+start: programa {ptr_star = ptr_prog; inOrder(&ptr_star, f_intermedia);};
+
+programa: PROGRAM zona_declaracion algoritmo END {ptr_prog = crearNodo("programa", ptr_zona, ptr_algo); printf("\n***** Compilacion exitosa: OK *****\n");};
 				  
-zona_declaracion:	declaraciones;
+zona_declaracion:	declaraciones {ptr_zona = ptr_decls;};
 
-declaraciones:	declaracion
-				|declaraciones declaracion;
+declaraciones:	declaracion {ptr_decls = ptr_decl;}
+				|declaraciones declaracion {ptr_decls = crearNodo("declaraciones", ptr_decls, ptr_decl);};
 
-declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } lista_declaracion ENDDEC {printf("*****\n Fin declaracion de variables *****\n");};
+declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } lista_declaracion ENDDEC {ptr_decl= ptr_list_dec; printf("*****\n Fin declaracion de variables *****\n");};
 
-lista_declaracion:	lista_var DOS_PUNTOS lista_tipo
+lista_declaracion:	lista_var DOS_PUNTOS lista_tipo {ptr_list_dec = crearNodo("dec", ptr_list_var, ptr_list_tip);}
 					| lista_declaracion lista_var DOS_PUNTOS lista_tipo
 
 
-lista_var:		ID {strcpy(matrizVariables[contadorId],yylval.strid) ;  contadorId++;contadorVar++; }
+lista_var:		ID {strcpy(matrizVariables[contadorId],yylval.strid) ;  contadorId++;contadorVar++;
+					ptr_list_var = crearHoja($1);
+					}
 				| lista_var COMA ID {strcpy(matrizVariables[contadorId],yylval.strid) ; contadorId++;contadorVar++;};
 
  
-lista_tipo:		TIPO_INT { auxTipoDato="int"; for(int i = 0; i < contadorVar; ++i){strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" INT");} contadorVar=0; }
-				|TIPO_FLOAT {  auxTipoDato="float"; for(int i = 0; i < contadorVar; ++i){strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" REAL"); }contadorVar = 0; }
-				|TIPO_STRING { auxTipoDato="string"; for(int i = 0; i < contadorVar; ++i){strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" STRING");}contadorVar = 0; };
+lista_tipo:		TIPO_INT { auxTipoDato="int"; ptr_list_tip = crearHoja(auxTipoDato); for(int i = 0; i < contadorVar; ++i){strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" INT");} contadorVar=0; }
+				|TIPO_FLOAT {  auxTipoDato="float"; ptr_list_tip = crearHoja(auxTipoDato); for(int i = 0; i < contadorVar; ++i){strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" REAL"); }contadorVar = 0; }
+				|TIPO_STRING { auxTipoDato="string"; ptr_list_tip = crearHoja(auxTipoDato); for(int i = 0; i < contadorVar; ++i){strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" STRING");}contadorVar = 0; };
               
 
-algoritmo:		bloque {printf("\n***** Fin de bloque *****\n");};
+algoritmo:		bloque {ptr_algo = ptr_sent; printf("\n***** Fin de bloque *****\n");};
 
-bloque:			sentencia
-				|bloque sentencia;
+bloque:			sentencia {ptr_bloq = ptr_sent;}
+				|bloque sentencia {ptr_bloq = crearNodo("bloque", ptr_bloq, ptr_sent);};
 
-sentencia:		asignacion { printf(" - asignacion - OK \n"); }
-				|seleccion { printf(" - seleccion - OK \n"); }
-				|ciclo { printf(" - ciclo - OK \n"); }
-				|entrada { printf(" - entrada - OK \n"); }
-				|salida { printf(" - salida - OK \n"); };
+
+sentencia:		asignacion { ptr_sent = ptr_asig; printf(" - asignacion - OK \n"); }
+				|seleccion { ptr_sent = ptr_sele; printf(" - seleccion - OK \n"); }
+				|ciclo { ptr_sent = ptr_cicl; printf(" - ciclo - OK \n"); }
+				|entrada { ptr_sent = crearNodo("entrada", ptr_entr, NULL); printf(" - entrada - OK \n"); }
+				|salida { ptr_sent = crearNodo("salida", ptr_sali, NULL); printf(" - salida - OK \n"); };
 
 ciclo:			WHILE PAR_A condicion PAR_C LLAVE_A bloque LLAVE_C;
        
-asignacion:		ID OPAR_ASIG expresion;
+asignacion:		ID OPAR_ASIG expresion {ptr_asig = crearNodo(":=", crearHoja($1), ptr_expr);};
                   
           
 seleccion: 		IF  PAR_A condicion PAR_C THEN bloque ENDIF
@@ -157,17 +165,17 @@ condicion:		comparacion
 				|inlist { printf(" - inlist - OK \n"); };
 				|between { printf(" - between - OK \n"); };
 
-comparacion:	expresion COMP_IGUAL expresion
-				|expresion COMP_MAYOR expresion	
-				|expresion COMP_MENOR expresion
-				|expresion COMP_MAYOR_IGUAL expresion  
-				|expresion COMP_MENOR_IGUAL expresion 
-				|expresion COMP_DISTINTO expresion;
+comparacion:	expresion COMP_IGUAL expresion {ptr_comp = crearNodo("==",ptr_entr,ptr_term);}  
+				|expresion COMP_MAYOR expresion	{ptr_comp = crearNodo(">",ptr_entr,ptr_term);}   
+				|expresion COMP_MENOR expresion {ptr_comp = crearNodo("<",ptr_entr,ptr_term);}  
+				|expresion COMP_MAYOR_IGUAL expresion  {ptr_comp = crearNodo(">=",ptr_entr,ptr_term);}  
+				|expresion COMP_MENOR_IGUAL expresion {ptr_comp = crearNodo("<=",ptr_entr,ptr_term);}  
+				|expresion COMP_DISTINTO expresion {ptr_comp = crearNodo("!=",ptr_entr,ptr_term);} ;
 
 
-expresion:		expresion { printf(" expresion"); } OP_MAS termino { printf(" termino"); }
-				|expresion { printf(" expresion"); }OP_MENOS termino { printf(" termino"); }
-				|termino { printf(" termino"); };
+expresion:		expresion { printf(" expresion"); } OP_MAS termino { printf(" termino"); ptr_expr=crearNodo("+",ptr_expr,ptr_term); }
+				|expresion { printf(" expresion"); }OP_MENOS termino { printf(" termino"); ptr_expr=crearNodo("-",ptr_expr,ptr_term);}
+				|termino { printf(" termino"); ptr_expr=ptr_term; };
 				
 inlist:			INLIST PAR_A ID PUN_Y_COM COR_A lista_expresiones COR_C PAR_C;
 
@@ -176,37 +184,42 @@ lista_expresiones:	lista_expresiones PUN_Y_COM expresion
 					
 between:		BETWEEN PAR_A ID COMA COR_A expresion PUN_Y_COM expresion COR_C PAR_C;
 
-termino:		termino OP_MULT factor { printf(" factor"); }
-				|termino OP_DIV factor { printf(" factor"); }
-				|factor { printf(" factor"); };
+termino:		termino OP_MULT factor { printf(" factor"); ptr_term=crearNodo("*",ptr_term,ptr_fact);}
+				|termino OP_DIV factor { printf(" factor"); ptr_term=crearNodo("/",ptr_term,ptr_fact);}
+				|factor { printf(" factor"); ptr_term=ptr_fact; };
                          
 
-factor:			ID 
-				|CTE_ENTERA 
-				|CTE_REAL 
-				|CTE_STRING 
-				|PAR_A expresion PAR_C;
+factor:			ID {ptr_fact = crearHoja($1); }
+				|CTE_ENTERA {ptr_fact = crearHoja($1); }
+				|CTE_REAL {ptr_fact = crearHoja($1); }
+				|CTE_STRING {ptr_fact = crearHoja($1); }
+				|PAR_A expresion PAR_C {;}
+				;
  
-entrada: 		READ ID;
+entrada: 		READ ID {ptr_entr = crearHoja($2);};
 
-salida:			WRITE CTE_STRING 
-				|WRITE ID;
+salida:			WRITE CTE_STRING {ptr_sali = crearHoja($2);}
+				|WRITE ID {ptr_sali = crearHoja($2);}; 
           
           
 %%
  
 int main(int argc,char *argv[])
 {
-  if ((yyin = fopen(argv[1], "rt")) == NULL)
-  {
+  if ((yyin = fopen(argv[1], "rt")) == NULL){
 	printf("\nERROR! No se pudo abrir el archivo: %s\n", argv[1]);
+	return 1;
   }
-  else
-  {
-	yyparse();
-	escribirEnTablaSimbolos();
+
+  if ((f_intermedia = fopen("intermedia.txt", "wt")) == NULL){
+	printf("\nERROR! No se pudo abrir el archivo intermedia\n");
+	return 1;
   }
+  
+  yyparse();
+  escribirEnTablaSimbolos();
   fclose(yyin);
+  fclose(f_intermedia);
   system ("Pause");
   return 0;
 }
