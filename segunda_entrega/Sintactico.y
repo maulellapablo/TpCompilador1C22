@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "y.tab.h"
+#include "arbol.h"
 
 
 struct struct_tablaSimbolos
@@ -29,6 +30,31 @@ int contadorId = 0;
 int agregarTipoEnTablaSimbolos(char* nombre, int contadorId);
 void mensaje_error(char*);
 void escribirEnTablaSimbolos();
+
+// Declaración punteros arbol
+t_nodo* ptr_prog; //programa
+t_nodo* ptr_zona; //zona_declaracion
+t_nodo* ptr_decls; //declaraciones
+t_nodo* ptr_decl; //declaracion
+t_nodo* ptr_list_dec; //lista_declaracion
+t_nodo* ptr_list_var; //lista_var
+t_nodo* ptr_list_tip; //lista_tipo
+t_nodo* ptr_algo; //algoritmo
+t_nodo* ptr_bloq; //bloque
+t_nodo* ptr_sent; //sentencia
+t_nodo* ptr_cicl; //ciclo
+t_nodo* ptr_asig; //asignacion
+t_nodo* ptr_sele; //seleccion
+t_nodo* ptr_cond; //condicion
+t_nodo* ptr_comp; //comparacion
+t_nodo* ptr_expr; //expresion
+t_nodo* ptr_inli; //inlist
+t_nodo* ptr_list_exp; //lista_expresiones
+t_nodo* ptr_betw; //between
+t_nodo* ptr_term; //termino
+t_nodo* ptr_fact; //factor
+t_nodo* ptr_entr; //entrada
+t_nodo* ptr_sali; //salida
 
 %}
 %token PROGRAM
