@@ -39,3 +39,5 @@ t_nodo* crearNodo(char* lexema, t_nodo* hijoIzq, t_nodo* hijoDer){
 
     return padre;
 }
+
+#endif // ARBOL_H_INCLUDED
