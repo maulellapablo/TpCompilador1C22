@@ -48,6 +48,8 @@ t_nodo* ptr_sent; //sentencia
 t_nodo* ptr_cicl; //ciclo
 t_nodo* ptr_asig; //asignacion
 t_nodo* ptr_sele; //seleccion
+t_nodo* ptr_true; //Rama verdadera
+t_nodo* ptr_false;//Rama falsa
 t_nodo* ptr_cond; //condicion
 t_nodo* ptr_comp; //comparacion
 t_nodo* ptr_expr; //expresion
@@ -119,18 +121,21 @@ programa: PROGRAM zona_declaracion algoritmo END {ptr_prog = crearNodo("programa
 zona_declaracion:	declaraciones {ptr_zona = ptr_decls;};
 
 declaraciones:	declaracion {ptr_decls = ptr_decl;}
-				|declaraciones declaracion {ptr_decls = crearNodo("declaraciones", ptr_decls, ptr_decl);};
+				|declaraciones declaracion {
+					ptr_decls = crearNodo("declaraciones", ptr_decls, ptr_decl);};
 
 declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } lista_declaracion ENDDEC {ptr_decl= ptr_list_dec; printf("*****\n Fin declaracion de variables *****\n");};
 
 lista_declaracion:	lista_var DOS_PUNTOS lista_tipo {ptr_list_dec = crearNodo("dec", ptr_list_var, ptr_list_tip);}
-					| lista_declaracion lista_var DOS_PUNTOS lista_tipo
+					| lista_declaracion lista_var DOS_PUNTOS lista_tipo {ptr_list_dec = crearNodo("lista_dec_vars", ptr_list_dec, crearNodo("dec", ptr_list_var, ptr_list_tip));}
 
 
 lista_var:		ID {strcpy(matrizVariables[contadorId],yylval.strid) ;  contadorId++;contadorVar++;
 					ptr_list_var = crearHoja($1);
 					}
-				| lista_var COMA ID {strcpy(matrizVariables[contadorId],yylval.strid) ; contadorId++;contadorVar++;};
+				| lista_var COMA ID {strcpy(matrizVariables[contadorId],yylval.strid) ; contadorId++;contadorVar++;
+									ptr_list_var = crearNodo("list_var", ptr_list_var, crearHoja($3));
+									};
 
  
 lista_tipo:		TIPO_INT { auxTipoDato="int"; ptr_list_tip = crearHoja(auxTipoDato); for(int i = 0; i < contadorVar; ++i){strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" INT");} contadorVar=0; }
@@ -138,7 +143,7 @@ lista_tipo:		TIPO_INT { auxTipoDato="int"; ptr_list_tip = crearHoja(auxTipoDato)
 				|TIPO_STRING { auxTipoDato="string"; ptr_list_tip = crearHoja(auxTipoDato); for(int i = 0; i < contadorVar; ++i){strcpy(matrizTipoDato[contadorTipos],auxTipoDato); agregarTipoEnTablaSimbolos(matrizVariables[contadorTipos],contadorTipos); contadorTipos++; printf(" STRING");}contadorVar = 0; };
               
 
-algoritmo:		bloque {ptr_algo = ptr_sent; printf("\n***** Fin de bloque *****\n");};
+algoritmo:		bloque {ptr_algo = ptr_bloq; printf("\n***** Fin de bloque *****\n");};
 
 bloque:			sentencia {ptr_bloq = ptr_sent;}
 				|bloque sentencia {ptr_bloq = crearNodo("bloque", ptr_bloq, ptr_sent);};
@@ -150,13 +155,13 @@ sentencia:		asignacion { ptr_sent = ptr_asig; printf(" - asignacion - OK \n"); }
 				|entrada { ptr_sent = crearNodo("entrada", ptr_entr, NULL); printf(" - entrada - OK \n"); }
 				|salida { ptr_sent = crearNodo("salida", ptr_sali, NULL); printf(" - salida - OK \n"); };
 
-ciclo:			WHILE PAR_A condicion PAR_C LLAVE_A bloque LLAVE_C;
+ciclo:			WHILE PAR_A condicion PAR_C LLAVE_A bloque LLAVE_C {ptr_cicl = crearNodo("ciclo", ptr_cond, ptr_bloq);};
        
 asignacion:		ID OPAR_ASIG expresion {ptr_asig = crearNodo(":=", crearHoja($1), ptr_expr);};
                   
           
-seleccion: 		IF  PAR_A condicion PAR_C THEN bloque ENDIF
-				| IF  PAR_A condicion PAR_C THEN bloque ELSE bloque ENDIF;
+seleccion: 		IF  PAR_A condicion PAR_C THEN bloque ENDIF {ptr_sele = crearNodo("if", ptr_cond, ptr_bloq);}
+				| IF  PAR_A condicion PAR_C THEN bloque {ptr_true = ptr_bloq;} ELSE bloque {ptr_false = ptr_bloq;} ENDIF {ptr_sele = crearNodo("if", ptr_cond, crearNodo("else", ptr_true, ptr_false));};
 
 condicion:		comparacion 
 				|comparacion OP_LOG_AND comparacion
@@ -177,10 +182,14 @@ expresion:		expresion { printf(" expresion"); } OP_MAS termino { printf(" termin
 				|expresion { printf(" expresion"); }OP_MENOS termino { printf(" termino"); ptr_expr=crearNodo("-",ptr_expr,ptr_term);}
 				|termino { printf(" termino"); ptr_expr=ptr_term; };
 				
-inlist:			INLIST PAR_A ID PUN_Y_COM COR_A lista_expresiones COR_C PAR_C;
+inlist:			INLIST PAR_A ID PUN_Y_COM COR_A lista_expresiones COR_C PAR_C {
+					ptr_inli = crearNodo("inlist", $3, ptr_list_exp)
+				};
 
-lista_expresiones:	lista_expresiones PUN_Y_COM expresion
-                    | expresion;
+lista_expresiones:	lista_expresiones PUN_Y_COM expresion {
+						ptr_list_exp = crearNodo("list_exp", ptr_list_exp, ptr_expr);
+					}
+                    | expresion {ptr_list_exp = ptr_expr;};
 					
 between:		BETWEEN PAR_A ID COMA COR_A expresion PUN_Y_COM expresion COR_C PAR_C;
 
