@@ -183,7 +183,7 @@ expresion:		expresion { printf(" expresion"); } OP_MAS termino { printf(" termin
 				|termino { printf(" termino"); ptr_expr=ptr_term; };
 				
 inlist:			INLIST PAR_A ID PUN_Y_COM COR_A lista_expresiones COR_C PAR_C {
-					ptr_inli = crearNodo("inlist", $3, ptr_list_exp)
+					ptr_inli = crearNodo("inlist", crearHoja($3), ptr_list_exp);
 				};
 
 lista_expresiones:	lista_expresiones PUN_Y_COM expresion {
