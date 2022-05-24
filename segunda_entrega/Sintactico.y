@@ -119,7 +119,7 @@ char * str;
 %%
 start: programa {ptr_star = ptr_prog; inOrder(&ptr_star, f_intermedia);};
 
-programa: PROGRAM zona_declaracion algoritmo END {ptr_prog = crearNodo("programa", ptr_zona, ptr_algo); printf("\n***** Compilacion exitosa: OK *****\n");};
+programa: PROGRAM zona_declaracion algoritmo END {ptr_prog = crearNodo("programa", ptr_algo, NULL); printf("\n***** Compilacion exitosa: OK *****\n");};
 				  
 zona_declaracion:	declaraciones {ptr_zona = ptr_decls;};
 
@@ -166,7 +166,7 @@ asignacion:		ID OPAR_ASIG expresion {ptr_asig = crearNodo(":=", crearHoja($1), p
 seleccion: 		IF  PAR_A condicion PAR_C THEN bloque ENDIF {ptr_sele = crearNodo("if", ptr_cond, ptr_bloq);}
 				| IF  PAR_A condicion PAR_C THEN bloque {ptr_true = ptr_bloq;} ELSE bloque {ptr_false = ptr_bloq;} ENDIF {ptr_sele = crearNodo("if", ptr_cond, crearNodo("else", ptr_true, ptr_false));};
 
-condicion:		comparacion 
+condicion:		comparacion {ptr_cond = ptr_comp;}
 				|comparacion OP_LOG_AND comparacion
 				|comparacion OP_LOG_OR comparacion	
 				|comparacion OP_LOG_NOT comparacion
@@ -199,8 +199,27 @@ lista_expresiones:	lista_expresiones PUN_Y_COM expresion {
 					}
                     | expresion {ptr_list_exp = ptr_expr;};
 					
-between:		BETWEEN PAR_A ID COMA COR_A expresion {ptr_betw_from = ptr_expr;} PUN_Y_COM expresion {ptr_betw_to = ptr_expr;} COR_C PAR_C {
-					ptr_betw = crearNodo("if", crearNodo(">=", crearHoja($3), ptr_betw_from),crearNodo("if", crearNodo("<=", crearHoja($3), ptr_betw_to), crearNodo("else", crearHoja("true"), crearHoja("false"))));
+between:		BETWEEN PAR_A ID COMA COR_A expresion {ptr_betw_from = crearNodo(":=", crearHoja("@from_aux"),ptr_expr);} PUN_Y_COM expresion {ptr_betw_to = crearNodo(":=", crearHoja("@to_aux"),ptr_expr);} COR_C PAR_C {
+					ptr_betw = crearNodo(";", 
+									ptr_betw_from,
+									crearNodo("if", 
+										crearNodo(">=", 
+											crearHoja($3), 
+											crearHoja("@from_aux")),
+										crearNodo(";", 
+											ptr_betw_to,
+											crearNodo("if",
+												crearNodo("<=", 
+													crearHoja($3),
+													crearHoja("@to_aux")),
+												crearNodo("else",
+													crearHoja("true"),
+													crearHoja("false")
+												)
+											)
+										)
+									)
+								);
 };
 
 termino:		termino OP_MULT factor { printf(" factor"); ptr_term=crearNodo("*",ptr_term,ptr_fact);}
