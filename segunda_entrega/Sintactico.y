@@ -54,6 +54,7 @@ t_nodo* ptr_cond; //condicion
 t_nodo* ptr_comp; //comparacion
 t_nodo* ptr_expr; //expresion
 t_nodo* ptr_inli; //inlist
+t_nodo* ptr_inli_id;
 t_nodo* ptr_list_exp; //lista_expresiones
 t_nodo* ptr_betw; //between
 t_nodo* ptr_betw_from;
@@ -184,7 +185,7 @@ expresion:		expresion { printf(" expresion"); } OP_MAS termino { printf(" termin
 				|expresion { printf(" expresion"); }OP_MENOS termino { printf(" termino"); ptr_expr=crearNodo("-",ptr_expr,ptr_term);}
 				|termino { printf(" termino"); ptr_expr=ptr_term; };
 				
-inlist:			INLIST PAR_A ID PUN_Y_COM COR_A lista_expresiones COR_C PAR_C {
+inlist:			INLIST PAR_A ID {ptr_inli_id = crearHoja($3);} PUN_Y_COM COR_A lista_expresiones COR_C PAR_C {
 					ptr_inli = crearNodo("inlist", crearHoja($3), ptr_list_exp);
 					// _Asg_a_aux = crearNodo(:=, crearHoja("@aux"), Ep);
 					// _Comp = crearNodo("==", crearHoja("@aux"), crearHoja("@min"));
@@ -199,7 +200,7 @@ lista_expresiones:	lista_expresiones PUN_Y_COM expresion {
                     | expresion {ptr_list_exp = ptr_expr;};
 					
 between:		BETWEEN PAR_A ID COMA COR_A expresion {ptr_betw_from = ptr_expr;} PUN_Y_COM expresion {ptr_betw_to = ptr_expr;} COR_C PAR_C {
-					ptr_betw = crearNodo("if", crearNodo(">=", $3, ptr_betw_from),crearNodo("if", crearNodo("<=", $3, ptr_betw_to), crearNodo("else", crearHoja(1), crearHoja(0))));
+					ptr_betw = crearNodo("if", crearNodo(">=", crearHoja($3), ptr_betw_from),crearNodo("if", crearNodo("<=", crearHoja($3), ptr_betw_to), crearNodo("else", crearHoja("true"), crearHoja("false"))));
 };
 
 termino:		termino OP_MULT factor { printf(" factor"); ptr_term=crearNodo("*",ptr_term,ptr_fact);}
