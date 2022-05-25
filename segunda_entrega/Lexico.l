@@ -90,9 +90,9 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 "["				{ return COR_A; }
 "]"				{ return COR_C; }	
 
-"\n"
-"\t"
-" "
+"\n"			{;}
+"\t"			{;}
+" "				{;}
 .				{validarCaracter();}
 %%
 
