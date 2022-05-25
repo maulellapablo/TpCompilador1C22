@@ -44,6 +44,7 @@ t_nodo* ptr_list_var; //lista_var
 t_nodo* ptr_list_tip; //lista_tipo
 t_nodo* ptr_algo; //algoritmo
 t_nodo* ptr_bloq; //bloque
+t_nodo* ptr_sub_bloq;
 t_nodo* ptr_sent; //sentencia
 t_nodo* ptr_cicl; //ciclo
 t_nodo* ptr_asig; //asignacion
@@ -149,8 +150,11 @@ lista_tipo:		TIPO_INT { auxTipoDato="int"; ptr_list_tip = crearHoja(auxTipoDato)
 
 algoritmo:		bloque {ptr_algo = ptr_bloq; printf("\n***** Fin de bloque *****\n");};
 
-bloque:			sentencia {ptr_bloq = ptr_sent;}
+bloque:			sentencia {if(ptr_bloq == NULL){ptr_bloq = ptr_sent;}else{ptr_bloq = crearNodo("bloque", ptr_bloq, ptr_sent);}}
 				|bloque sentencia {ptr_bloq = crearNodo("bloque", ptr_bloq, ptr_sent);};
+
+sub_bloque:		sentencia {ptr_sub_bloq = ptr_sent;}
+				|sub_bloque sentencia {ptr_sub_bloq = crearNodo("sub_bloque", ptr_sub_bloq, ptr_sent);};
 
 
 sentencia:		asignacion { ptr_sent = ptr_asig; printf(" - asignacion - OK \n"); }
@@ -159,13 +163,13 @@ sentencia:		asignacion { ptr_sent = ptr_asig; printf(" - asignacion - OK \n"); }
 				|entrada { ptr_sent = crearNodo("entrada", ptr_entr, NULL); printf(" - entrada - OK \n"); }
 				|salida { ptr_sent = crearNodo("salida", ptr_sali, NULL); printf(" - salida - OK \n"); };
 
-ciclo:			WHILE PAR_A condicion PAR_C LLAVE_A bloque LLAVE_C {ptr_cicl = crearNodo("ciclo", ptr_cond, ptr_bloq);};
+ciclo:			WHILE PAR_A condicion PAR_C LLAVE_A sub_bloque LLAVE_C {ptr_cicl = crearNodo("ciclo", ptr_cond, ptr_sub_bloq);};
        
 asignacion:		ID OPAR_ASIG expresion {ptr_asig = crearNodo(":=", crearHoja($1), ptr_expr);};
                   
           
-seleccion: 		IF  PAR_A condicion PAR_C THEN bloque ENDIF {ptr_sele = crearNodo("if", ptr_cond, ptr_bloq);}
-				| IF  PAR_A condicion PAR_C THEN bloque {ptr_true = ptr_bloq;} ELSE bloque {ptr_false = ptr_bloq;} ENDIF {ptr_sele = crearNodo("if", ptr_cond, crearNodo("else", ptr_true, ptr_false));};
+seleccion: 		IF  PAR_A condicion PAR_C THEN sub_bloque ENDIF {ptr_sele = crearNodo("if", ptr_cond, ptr_sub_bloq);}
+				| IF  PAR_A condicion PAR_C THEN sub_bloque {ptr_true = ptr_sub_bloq;} ELSE sub_bloque {ptr_false = ptr_sub_bloq;} ENDIF {ptr_sele = crearNodo("if", ptr_cond, crearNodo("else", ptr_true, ptr_false));};
 
 condicion:		comparacion {ptr_cond = ptr_comp;}
 				|comparacion OP_LOG_AND comparacion
