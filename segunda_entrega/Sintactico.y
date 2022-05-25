@@ -149,7 +149,7 @@ lista_tipo:		TIPO_INT { auxTipoDato="int"; ptr_list_tip = crearHoja(auxTipoDato)
 
 algoritmo:		bloque {ptr_algo = ptr_bloq; printf("\n***** Fin de bloque *****\n");};
 
-bloque:			sentencia {ptr_bloq = ptr_sent;}
+bloque:			sentencia {if(ptr_bloq == NULL){ptr_bloq = ptr_sent;}}
 				|bloque sentencia {ptr_bloq = crearNodo("bloque", ptr_bloq, ptr_sent);};
 
 
