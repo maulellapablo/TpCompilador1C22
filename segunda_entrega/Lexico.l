@@ -163,7 +163,7 @@ int guardarEnTablaSimbolos(char* tipo, char* nombre){
 		strcpy(tablaSimbolos[i].longitud,longitudConstanteString);
 	}
 	else
-		tablaSimbolos[puntero_array].longitud[0]='\0';
+		tablaSimbolos[puntero_array].longitud[0]='0';
 	
 	//Se agrega en la tabla de simbolos y se retorna su posicion
 	posicion = puntero_array;
