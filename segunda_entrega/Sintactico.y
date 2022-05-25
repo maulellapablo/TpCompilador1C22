@@ -52,6 +52,7 @@ t_nodo* ptr_true; //Rama verdadera
 t_nodo* ptr_false;//Rama falsa
 t_nodo* ptr_cond; //condicion
 t_nodo* ptr_comp; //comparacion
+t_nodo* ptr_comp_aux;
 t_nodo* ptr_expr; //expresion
 t_nodo* ptr_inli; //inlist
 t_nodo* ptr_inli_id;
@@ -173,12 +174,12 @@ condicion:		comparacion {ptr_cond = ptr_comp;}
 				|inlist { ptr_cond = ptr_inli; printf(" - inlist - OK \n"); };
 				|between { ptr_cond = ptr_betw; printf(" - between - OK \n"); };
 
-comparacion:	expresion COMP_IGUAL expresion {ptr_comp = crearNodo("==",ptr_entr,ptr_term);}  
-				|expresion COMP_MAYOR expresion	{ptr_comp = crearNodo(">",ptr_entr,ptr_term);}   
-				|expresion COMP_MENOR expresion {ptr_comp = crearNodo("<",ptr_entr,ptr_term);}  
-				|expresion COMP_MAYOR_IGUAL expresion  {ptr_comp = crearNodo(">=",ptr_entr,ptr_term);}  
-				|expresion COMP_MENOR_IGUAL expresion {ptr_comp = crearNodo("<=",ptr_entr,ptr_term);}  
-				|expresion COMP_DISTINTO expresion {ptr_comp = crearNodo("!=",ptr_entr,ptr_term);} ;
+comparacion:	expresion {ptr_comp_aux = ptr_expr;} COMP_IGUAL expresion {ptr_comp = crearNodo("==",ptr_comp_aux,ptr_expr);}  
+				|expresion {ptr_comp_aux = ptr_expr;} COMP_MAYOR expresion	{ptr_comp = crearNodo(">",ptr_comp_aux,ptr_expr);}   
+				|expresion {ptr_comp_aux = ptr_expr;} COMP_MENOR expresion {ptr_comp = crearNodo("<",ptr_comp_aux,ptr_expr);}  
+				|expresion {ptr_comp_aux = ptr_expr;} COMP_MAYOR_IGUAL expresion  {ptr_comp = crearNodo(">=",ptr_comp_aux,ptr_expr);}  
+				|expresion {ptr_comp_aux = ptr_expr;} COMP_MENOR_IGUAL expresion {ptr_comp = crearNodo("<=",ptr_comp_aux,ptr_expr);}  
+				|expresion {ptr_comp_aux = ptr_expr;} COMP_DISTINTO expresion {ptr_comp = crearNodo("!=",ptr_comp_aux,ptr_expr);} ;
 
 
 expresion:		expresion { printf(" expresion"); } OP_MAS termino { printf(" termino"); ptr_expr=crearNodo("+",ptr_expr,ptr_term); }
