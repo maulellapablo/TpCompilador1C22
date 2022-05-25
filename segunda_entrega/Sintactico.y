@@ -52,10 +52,14 @@ t_nodo* ptr_true; //Rama verdadera
 t_nodo* ptr_false;//Rama falsa
 t_nodo* ptr_cond; //condicion
 t_nodo* ptr_comp; //comparacion
+t_nodo* ptr_comp_aux;
 t_nodo* ptr_expr; //expresion
 t_nodo* ptr_inli; //inlist
+t_nodo* ptr_inli_id;
 t_nodo* ptr_list_exp; //lista_expresiones
 t_nodo* ptr_betw; //between
+t_nodo* ptr_betw_from;
+t_nodo* ptr_betw_to;
 t_nodo* ptr_term; //termino
 t_nodo* ptr_fact; //factor
 t_nodo* ptr_entr; //entrada
@@ -116,7 +120,7 @@ char * str;
 %%
 start: programa {ptr_star = ptr_prog; inOrder(&ptr_star, f_intermedia);};
 
-programa: PROGRAM zona_declaracion algoritmo END {ptr_prog = crearNodo("programa", ptr_zona, ptr_algo); printf("\n***** Compilacion exitosa: OK *****\n");};
+programa: PROGRAM zona_declaracion algoritmo END {ptr_prog = crearNodo("programa", ptr_algo, NULL); printf("\n***** Compilacion exitosa: OK *****\n");};
 				  
 zona_declaracion:	declaraciones {ptr_zona = ptr_decls;};
 
@@ -127,7 +131,7 @@ declaraciones:	declaracion {ptr_decls = ptr_decl;}
 declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } lista_declaracion ENDDEC {ptr_decl= ptr_list_dec; printf("*****\n Fin declaracion de variables *****\n");};
 
 lista_declaracion:	lista_var DOS_PUNTOS lista_tipo {ptr_list_dec = crearNodo("dec", ptr_list_var, ptr_list_tip);}
-					| lista_declaracion lista_var DOS_PUNTOS lista_tipo {ptr_list_dec = crearNodo("lista_dec_vars", ptr_list_dec, crearNodo("dec", ptr_list_var, ptr_list_tip));}
+					| lista_declaracion lista_var DOS_PUNTOS lista_tipo {ptr_list_dec = crearNodo("lista_dec_vars", ptr_list_dec, crearNodo("dec", ptr_list_var, ptr_list_tip));};
 
 
 lista_var:		ID {strcpy(matrizVariables[contadorId],yylval.strid) ;  contadorId++;contadorVar++;
@@ -163,35 +167,74 @@ asignacion:		ID OPAR_ASIG expresion {ptr_asig = crearNodo(":=", crearHoja($1), p
 seleccion: 		IF  PAR_A condicion PAR_C THEN bloque ENDIF {ptr_sele = crearNodo("if", ptr_cond, ptr_bloq);}
 				| IF  PAR_A condicion PAR_C THEN bloque {ptr_true = ptr_bloq;} ELSE bloque {ptr_false = ptr_bloq;} ENDIF {ptr_sele = crearNodo("if", ptr_cond, crearNodo("else", ptr_true, ptr_false));};
 
-condicion:		comparacion 
+condicion:		comparacion {ptr_cond = ptr_comp;}
 				|comparacion OP_LOG_AND comparacion
 				|comparacion OP_LOG_OR comparacion	
 				|comparacion OP_LOG_NOT comparacion
-				|inlist { printf(" - inlist - OK \n"); };
-				|between { printf(" - between - OK \n"); };
+				|inlist { ptr_cond = ptr_inli; printf(" - inlist - OK \n"); };
+				|between { ptr_cond = ptr_betw; printf(" - between - OK \n"); };
 
-comparacion:	expresion COMP_IGUAL expresion {ptr_comp = crearNodo("==",ptr_entr,ptr_term);}  
-				|expresion COMP_MAYOR expresion	{ptr_comp = crearNodo(">",ptr_entr,ptr_term);}   
-				|expresion COMP_MENOR expresion {ptr_comp = crearNodo("<",ptr_entr,ptr_term);}  
-				|expresion COMP_MAYOR_IGUAL expresion  {ptr_comp = crearNodo(">=",ptr_entr,ptr_term);}  
-				|expresion COMP_MENOR_IGUAL expresion {ptr_comp = crearNodo("<=",ptr_entr,ptr_term);}  
-				|expresion COMP_DISTINTO expresion {ptr_comp = crearNodo("!=",ptr_entr,ptr_term);} ;
+comparacion:	expresion {ptr_comp_aux = ptr_expr;} COMP_IGUAL expresion {ptr_comp = crearNodo("==",ptr_comp_aux,ptr_expr);}  
+				|expresion {ptr_comp_aux = ptr_expr;} COMP_MAYOR expresion	{ptr_comp = crearNodo(">",ptr_comp_aux,ptr_expr);}   
+				|expresion {ptr_comp_aux = ptr_expr;} COMP_MENOR expresion {ptr_comp = crearNodo("<",ptr_comp_aux,ptr_expr);}  
+				|expresion {ptr_comp_aux = ptr_expr;} COMP_MAYOR_IGUAL expresion  {ptr_comp = crearNodo(">=",ptr_comp_aux,ptr_expr);}  
+				|expresion {ptr_comp_aux = ptr_expr;} COMP_MENOR_IGUAL expresion {ptr_comp = crearNodo("<=",ptr_comp_aux,ptr_expr);}  
+				|expresion {ptr_comp_aux = ptr_expr;} COMP_DISTINTO expresion {ptr_comp = crearNodo("!=",ptr_comp_aux,ptr_expr);} ;
 
 
 expresion:		expresion { printf(" expresion"); } OP_MAS termino { printf(" termino"); ptr_expr=crearNodo("+",ptr_expr,ptr_term); }
 				|expresion { printf(" expresion"); }OP_MENOS termino { printf(" termino"); ptr_expr=crearNodo("-",ptr_expr,ptr_term);}
 				|termino { printf(" termino"); ptr_expr=ptr_term; };
 				
-inlist:			INLIST PAR_A ID PUN_Y_COM COR_A lista_expresiones COR_C PAR_C {
+inlist:			INLIST PAR_A ID {ptr_inli_id = crearHoja($3);} PUN_Y_COM COR_A lista_expresiones COR_C PAR_C {
 					ptr_inli = crearNodo("inlist", crearHoja($3), ptr_list_exp);
 				};
 
 lista_expresiones:	lista_expresiones PUN_Y_COM expresion {
-						ptr_list_exp = crearNodo("list_exp", ptr_list_exp, ptr_expr);
-					}
-                    | expresion {ptr_list_exp = ptr_expr;};
+						ptr_list_exp = crearNodo("list_exp",
+											crearNodo(";",
+												crearNodo(":=", crearHoja("@aux"), ptr_expr),
+												crearNodo("if", 
+													crearNodo("==", crearHoja("@aux"), ptr_inli_id),
+													crearNodo("else", crearHoja("true"), ptr_list_exp)
+													)
+												),
+												NULL
+											);
+										}
+                    | expresion {ptr_list_exp = crearNodo(";", 
+													crearNodo(":=",
+														crearHoja("@aux"),
+														ptr_expr),
+													crearNodo("if",
+														crearNodo("==", ptr_inli_id, crearHoja("@aux")),
+														crearHoja("true")
+														)
+													);
+								};
 					
-between:		BETWEEN PAR_A ID COMA COR_A expresion PUN_Y_COM expresion COR_C PAR_C;
+between:		BETWEEN PAR_A ID COMA COR_A expresion {ptr_betw_from = crearNodo(":=", crearHoja("@from_aux"),ptr_expr);} PUN_Y_COM expresion {ptr_betw_to = crearNodo(":=", crearHoja("@to_aux"),ptr_expr);} COR_C PAR_C {
+					ptr_betw = crearNodo(";", 
+									ptr_betw_from,
+									crearNodo("if", 
+										crearNodo(">=", 
+											crearHoja($3), 
+											crearHoja("@from_aux")),
+										crearNodo(";", 
+											ptr_betw_to,
+											crearNodo("if",
+												crearNodo("<=", 
+													crearHoja($3),
+													crearHoja("@to_aux")),
+												crearNodo("else",
+													crearHoja("true"),
+													crearHoja("false")
+												)
+											)
+										)
+									)
+								);
+};
 
 termino:		termino OP_MULT factor { printf(" factor"); ptr_term=crearNodo("*",ptr_term,ptr_fact);}
 				|termino OP_DIV factor { printf(" factor"); ptr_term=crearNodo("/",ptr_term,ptr_fact);}
