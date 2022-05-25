@@ -130,7 +130,7 @@ declaraciones:	declaracion {ptr_decls = ptr_decl;}
 declaracion:	DECVAR { printf("***** Inicio declaracion de variables *****\n"); } lista_declaracion ENDDEC {ptr_decl= ptr_list_dec; printf("*****\n Fin declaracion de variables *****\n");};
 
 lista_declaracion:	lista_var DOS_PUNTOS lista_tipo {ptr_list_dec = crearNodo("dec", ptr_list_var, ptr_list_tip);}
-					| lista_declaracion lista_var DOS_PUNTOS lista_tipo {ptr_list_dec = crearNodo("lista_dec_vars", ptr_list_dec, crearNodo("dec", ptr_list_var, ptr_list_tip));}
+					| lista_declaracion lista_var DOS_PUNTOS lista_tipo {ptr_list_dec = crearNodo("lista_dec_vars", ptr_list_dec, crearNodo("dec", ptr_list_var, ptr_list_tip));};
 
 
 lista_var:		ID {strcpy(matrizVariables[contadorId],yylval.strid) ;  contadorId++;contadorVar++;
@@ -187,17 +187,30 @@ expresion:		expresion { printf(" expresion"); } OP_MAS termino { printf(" termin
 				
 inlist:			INLIST PAR_A ID {ptr_inli_id = crearHoja($3);} PUN_Y_COM COR_A lista_expresiones COR_C PAR_C {
 					ptr_inli = crearNodo("inlist", crearHoja($3), ptr_list_exp);
-					// _Asg_a_aux = crearNodo(:=, crearHoja("@aux"), Ep);
-					// _Comp = crearNodo("==", crearHoja("@aux"), crearHoja("@min"));
-					// _Then = crearNodo(":=", crearHoja("@min") , crearHoja("@aux"));
-					// _If = crearNodo(“if”, _Comp, _Then);
-					// _Mi = crearNodo(“inlist” , _Mi, crearNodo(“;” , _Asg_a_aux, _if ));
 				};
 
 lista_expresiones:	lista_expresiones PUN_Y_COM expresion {
-						ptr_list_exp = crearNodo("list_exp", ptr_list_exp, ptr_expr);
-					}
-                    | expresion {ptr_list_exp = ptr_expr;};
+						ptr_list_exp = crearNodo("list_exp",
+											crearNodo(";",
+												crearNodo(":=", crearHoja("@aux"), ptr_expr),
+												crearNodo("if", 
+													crearNodo("==", crearHoja("@aux"), ptr_inli_id),
+													crearNodo("else", crearHoja("true"), ptr_list_exp)
+													)
+												),
+												NULL
+											);
+										}
+                    | expresion {ptr_list_exp = crearNodo(";", 
+													crearNodo(":=",
+														crearHoja("@aux"),
+														ptr_expr),
+													crearNodo("if",
+														crearNodo("==", ptr_inli_id, crearHoja("@aux")),
+														crearHoja("true")
+														)
+													);
+								};
 					
 between:		BETWEEN PAR_A ID COMA COR_A expresion {ptr_betw_from = crearNodo(":=", crearHoja("@from_aux"),ptr_expr);} PUN_Y_COM expresion {ptr_betw_to = crearNodo(":=", crearHoja("@to_aux"),ptr_expr);} COR_C PAR_C {
 					ptr_betw = crearNodo(";", 
