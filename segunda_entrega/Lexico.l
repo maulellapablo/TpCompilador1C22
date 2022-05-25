@@ -21,6 +21,7 @@ void validarCotaEntero(char*);
 void validarCotaReal(char*);
 void validarCotaCaracteres(char*);
 int guardarEnTablaSimbolos(char*, char*);
+int validarCaracter(void);
 %}
 %option noyywrap  
 %option yylineno 
@@ -92,8 +93,15 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 "\n"
 "\t"
 " "
-
+.				{validarCaracter();}
 %%
+
+int validarCaracter(void)
+{
+	printf("ERROR! Caracter invalido ingresado\n");
+	system("Pause");
+	exit(1);
+}
 
 void validarCotaEntero(char* str)
 {
