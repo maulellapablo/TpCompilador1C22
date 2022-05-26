@@ -52,6 +52,7 @@ t_nodo* ptr_sele; //seleccion
 t_nodo* ptr_true; //Rama verdadera
 t_nodo* ptr_false;//Rama falsa
 t_nodo* ptr_cond; //condicion
+t_nodo* ptr_cond_aux;
 t_nodo* ptr_comp; //comparacion
 t_nodo* ptr_comp_aux;
 t_nodo* ptr_expr; //expresion
@@ -65,6 +66,9 @@ t_nodo* ptr_term; //termino
 t_nodo* ptr_fact; //factor
 t_nodo* ptr_entr; //entrada
 t_nodo* ptr_sali; //salida
+
+//flags
+int and_flag, or_flag;
 
 %}
 %token PROGRAM
@@ -168,13 +172,33 @@ ciclo:			WHILE PAR_A condicion PAR_C LLAVE_A sub_bloque LLAVE_C {ptr_cicl = crea
 asignacion:		ID OPAR_ASIG expresion {ptr_asig = crearNodo(":=", crearHoja($1), ptr_expr);};
                   
           
-seleccion: 		IF  PAR_A condicion PAR_C THEN sub_bloque ENDIF {ptr_sele = crearNodo("if", ptr_cond, ptr_sub_bloq);}
-				| IF  PAR_A condicion PAR_C THEN sub_bloque {ptr_true = ptr_sub_bloq;} ELSE sub_bloque {ptr_false = ptr_sub_bloq;} ENDIF {ptr_sele = crearNodo("if", ptr_cond, crearNodo("else", ptr_true, ptr_false));};
+seleccion: 		IF  PAR_A condicion PAR_C THEN sub_bloque ENDIF {
+																	if(and_flag){
+																		ptr_sele = crearNodo("if", ptr_cond,crearNodo("if",ptr_cond_aux,ptr_sub_bloq));
+																		and_flag = 0;
+																	}else if(or_flag) {
+																		ptr_sele = crearNodo("if", ptr_cond,crearNodo("else", ptr_sub_bloq, crearNodo("if",ptr_cond_aux,ptr_sub_bloq)));
+																		or_flag = 0;
+																	}else{
+																		ptr_sele = crearNodo("if", ptr_cond, ptr_sub_bloq);
+																	}
+																}
+				| IF  PAR_A condicion PAR_C THEN sub_bloque {ptr_true = ptr_sub_bloq;} ELSE sub_bloque {ptr_false = ptr_sub_bloq;} ENDIF {
+																	if(and_flag){
+																		ptr_sele = crearNodo("if", ptr_cond, crearNodo("else",crearNodo("if",ptr_cond_aux,crearNodo("else",ptr_true,ptr_false)),ptr_false));
+																		and_flag = 0;
+																	}else if(or_flag) {
+																		ptr_sele = crearNodo("if", ptr_cond, crearNodo("else",ptr_true,crearNodo("if",ptr_cond_aux,crearNodo("else",ptr_true,ptr_false))));
+																		or_flag = 0;
+																	}else{
+																		ptr_sele = crearNodo("if", ptr_cond, crearNodo("else", ptr_true, ptr_false));
+																	}
+																};
 
 condicion:		comparacion {ptr_cond = ptr_comp;}
-				|comparacion OP_LOG_AND comparacion
-				|comparacion OP_LOG_OR comparacion	
-				|comparacion OP_LOG_NOT comparacion
+				|comparacion OP_LOG_AND {ptr_cond_aux = ptr_comp; } comparacion {and_flag = 1;ptr_cond = ptr_comp;}
+				|comparacion OP_LOG_OR {ptr_cond_aux = ptr_comp; } comparacion	{or_flag = 1;ptr_cond = ptr_comp;}
+				|OP_LOG_NOT comparacion {ptr_cond = crearNodo("not", ptr_comp, NULL);}
 				|inlist { ptr_cond = ptr_inli; printf(" - inlist - OK \n"); };
 				|between { ptr_cond = ptr_betw; printf(" - between - OK \n"); };
 
@@ -271,6 +295,7 @@ int main(int argc,char *argv[])
 	printf("\nERROR! No se pudo abrir el archivo intermedia\n");
 	return 1;
   }
+  or_flag = and_flag = 0;
   
   yyparse();
   escribirEnTablaSimbolos();
