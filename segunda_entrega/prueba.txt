@@ -44,7 +44,7 @@ endif
 while (between(int1, [1; 2 + int2]))
 {
 	cadena := "Funciona perfectamente"
-	int1 = int1 + 1
+	int1 := int1 + 1
 }
 
 end 
