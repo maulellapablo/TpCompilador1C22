@@ -19,16 +19,32 @@ then
 	write "Condicion verdadera"
 endif
 
-if (inlist(var1; [2; 2; 4 + int1]))
+if (int1 == 1 and int2 == 2)
+then
+	write "Condicion verdadera and"
+endif
+
+if (int1 == 1 or int2 == 5)
+then
+	write "Condicion verdadera or"
+endif
+
+if (not int1 == 2)
+then
+	write "Condicion verdadera not"
+endif
+
+if (inlist(int1; [2; 2; 4 - int1]))
 then
 	write "Condicion verdadera"
 else
 	write "Condicion falsa"
 endif
 
-while (between(var1, [1; 2 - int2]))
+while (between(int1, [1; 2 + int2]))
 {
 	cadena := "Funciona perfectamente"
+	int1 = int1 + 1
 }
 
 end 
