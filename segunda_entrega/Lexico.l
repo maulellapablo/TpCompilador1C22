@@ -38,7 +38,7 @@ CARACTERES		({LETRA}|\@|\!|\$|\%|\&|\/|\(|\)|\=|\\|\?)
 ESPACIO			" "
 CTE_STRING		{COMILLAS}({CARACTERES}|{DIGITO}|{ESPACIO})+{COMILLAS}
 COMENTARIO		{COM_INI}(.)+{COM_FIN}
-COMENTARIOS		{COM_INI}(.)+{COM_FIN}
+COMENTARIOS		{COM_INI}(.)+{COM_INI}"\n"{COM_INI}(.)+{COM_FIN}
 
 
 
@@ -75,6 +75,7 @@ COMENTARIOS		{COM_INI}(.)+{COM_FIN}
 {CTE_STRING}	{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.real = strdup(yytext); return CTE_STRING; }
 {ID}			{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("ID",yytext); yylval.strid = strdup(yytext); return ID; }
 {COMENTARIO}	{ printf("\nComentario que sera descartado:  %s\n",yytext); }
+{COMENTARIOS}	{ printf("\nComentario anidado que sera descartado:  %s\n",yytext); }
 
 "+"				{ return OP_MAS;  }  
 "-"				{ return OP_MENOS; }
