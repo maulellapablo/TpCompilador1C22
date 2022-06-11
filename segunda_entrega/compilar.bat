@@ -6,3 +6,6 @@ c:\MinGW\bin\gcc.exe  lex.yy.c  y.tab.c  -o Segunda.exe
 pause
 Segunda.exe  prueba.txt
 pause
+set path=%path%;C:\Program Files\Graphviz\bin
+dot -Tpng arbol.dot -o arbol.png
+pause

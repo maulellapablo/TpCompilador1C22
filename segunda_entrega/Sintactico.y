@@ -32,6 +32,7 @@ void mensaje_error(char*);
 void escribirEnTablaSimbolos();
 
 FILE *f_intermedia;
+FILE *f_dot_arbol;
 
 // Declaración punteros arbol
 t_nodo* ptr_star; //star
@@ -295,12 +296,20 @@ int main(int argc,char *argv[])
 	printf("\nERROR! No se pudo abrir el archivo intermedia\n");
 	return 1;
   }
+
+  if ((f_dot_arbol = fopen("arbol.dot", "wt")) == NULL){
+	printf("\nERROR! No se pudo abrir el archivo .dot para armar el arbol\n");
+	return 1;
+  }
+
+
   or_flag = and_flag = 0;
   
   yyparse();
   escribirEnTablaSimbolos();
   fclose(yyin);
   fclose(f_intermedia);
+  generarDOT(&ptr_star, f_dot_arbol);
   system ("Pause");
   return 0;
 }
