@@ -15,7 +15,7 @@ typedef t_nodo* t_arbol;
 t_nodo* crearHoja( char* lexema);
 t_nodo* crearNodo( char* lexema, t_nodo* hijoIzq, t_nodo* hijoDer);
 void inOrden(t_arbol *pa, FILE *pIntermedia);
-char *str_replace(char *orig, char *rep, char *with);
+char* replace_char(char* str, char find, char replace);
 
 t_nodo* crearHoja( char* lexema){
     t_nodo* nodo = (t_nodo*) malloc (sizeof(t_nodo));
