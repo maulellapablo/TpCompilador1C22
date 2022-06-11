@@ -56,7 +56,7 @@ void inOrder(t_arbol *pa, FILE *pIntermedia)
 void grabarNodoDOT(t_nodo *pn, FILE* stream, int* numero)
 {
     int thisId = (*numero);
-    fprintf(stream, "id%d [label = \"%s\"];\n", thisId, (*pn).data);
+    fprintf(stream, "id%d [label = \"%s\"];\n", thisId, str_replace((*pn).data,'"','\"'));
 
     if ((*pn).izq)
     {
