@@ -51,4 +51,42 @@ void inOrder(t_arbol *pa, FILE *pIntermedia)
     inOrder(&(*pa)->der, pIntermedia);
 }
 
+
+void grabarNodoDOT(t_nodo *pn, FILE* stream, int* numero)
+{
+    int thisId = (*numero);
+    fprintf(stream, "id%d [label = \"%s\"];\n", thisId, (*pn).data);
+
+    if ((*pn).izq)
+    {
+        int izqId = ++(*numero);
+        grabarNodoDOT((*pn).izq, stream, numero);
+        fprintf(stream, "id%d -> id%d ;\n", thisId , izqId);
+    }
+
+    if ((*pn).der)
+    {
+        int derId = ++(*numero);
+        grabarNodoDOT((*pn).der, stream, numero);
+        fprintf(stream, "id%d -> id%d ;\n", thisId , derId);
+    }
+}
+
+void generarDOT(t_arbol* pa, FILE* stream)
+{
+    fprintf(stream, "digraph BST {\n");
+    fprintf(stream, "    node [fontname=\"Arial\"];\n");
+
+    if(!(*pa))
+        fprintf(stream, "\n");
+    else if (!(*pa)->der && !(*pa)->izq)
+        fprintf(stream, "    \"%s\";\n", (*pa)->data);
+    else{
+        int numero = 1;
+        grabarNodoDOT((*pa), stream, &numero);
+    }
+
+    fprintf(stream, "}\n");
+}
+
 #endif // ARBOL_H_INCLUDED
