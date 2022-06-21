@@ -5,15 +5,6 @@
 #include "y.tab.h"
 #include "arbol.h"
 
-
-struct struct_tablaSimbolos
-{
-	char nombre[100];
-	char tipo[100];
-	char valor[50];
-	char longitud[100];
-};
-
 int yystopparser=0;
 FILE  *yyin;
 

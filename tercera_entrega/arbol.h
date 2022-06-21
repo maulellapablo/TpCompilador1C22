@@ -12,12 +12,21 @@ typedef struct nodo{
 
 typedef t_nodo* t_arbol;
 
+struct struct_tablaSimbolos
+{
+	char nombre[100];
+	char tipo[100];
+	char valor[50];
+	char longitud[100];
+};
+
 t_nodo* crearHoja( char* lexema);
 t_nodo* crearNodo( char* lexema, t_nodo* hijoIzq, t_nodo* hijoDer);
 void inOrden(t_arbol *pa, FILE *pIntermedia);
 char* replace_char(char* str, char find, char replace);
 void generarAssembler(t_arbol *pa, FILE *f);
 void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos* ts, FILE* f);
+t_arbol* recorrerArbol(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts);
 
 t_nodo* crearHoja( char* lexema){
     t_nodo* nodo = (t_nodo*) malloc (sizeof(t_nodo));
@@ -108,7 +117,7 @@ void generarAssembler(t_arbol *pa, FILE *f){
 
 	FILE *f_temp = fopen("Temp.asm", "wt");
 
-	while(recorrerArbol(pArbol,f_temp, &listaAux) != pArbol){}
+	while(recorrerArbol(pArbol,f_temp, &tablaSimbolos) != pArbol){}
  
 	fclose(f_temp);
 
@@ -150,6 +159,10 @@ void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos* ts, FILE* f){
         else if(strncmp((*ts[i])->nombre, "_", 1)) //Es variable
             fprintf(f, "%-30s%-30s%-30s%-s %-s\n", (*ts[i])->nombre, "dd", "?", ";Variable", (*ts[i])->tipo);
     }
+}
+
+t_arbol* recorrerArbol(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts){
+    return pa;
 }
 
 #endif // ARBOL_H_INCLUDED
