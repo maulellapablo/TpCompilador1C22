@@ -142,11 +142,17 @@ int guardarEnTablaSimbolos(char* tipo, char* nombre){
 	char longitudConstanteString[10];
 	int i;
 	int posicion;
-	char lexema[50]; 
-	lexema[0]='_';
-	lexema[1]='\0';
-	//Se anexa al lexema un guion bajo al inicio
-	strcat(lexema,nombre);
+	char lexema[50];
+
+	if(strcmp(tipo,"CTE")==0){
+		lexema[0]='_';
+		lexema[1]='\0';
+		//Se anexa al lexema un guion bajo al inicio
+		strcat(lexema,nombre);
+	}else{
+		lexema[0]='\0';
+		strcat(lexema,nombre);
+	}
 	
 	//Recorremos la tabla de simbolos y en caso que el lexema ya exista, no se agrega y se retorna su posicion
 	for(i = 0; i < puntero_array; i++)
@@ -164,7 +170,18 @@ int guardarEnTablaSimbolos(char* tipo, char* nombre){
 		tablaSimbolos[puntero_array].valor[0]='\0';
 		
 	strcpy(tablaSimbolos[puntero_array].nombre, lexema );
-	tablaSimbolos[puntero_array].tipo[0]='\0';
+
+	if(strcmp(tipo,"CTE")!=0){
+		tablaSimbolos[puntero_array].tipo[0]='\0';
+	}else{
+		if(strcmp(tipo,"CTE_ENTERA")==0)
+			tablaSimbolos[puntero_array].tipo[0]="int";
+		if(strcmp(tipo,"CTE_STRING")==0)
+			tablaSimbolos[puntero_array].tipo[0]="string";
+		if(strcmp(tipo,"CTE_REAL")==0)
+			tablaSimbolos[puntero_array].tipo[0]="float";
+	}
+
 	//En caso de ser una CTE string, se cuentan los caracteres y se guardan en la tabla de simbolos
 	if(tablaSimbolos[i].valor[0] == '\"')
 	{

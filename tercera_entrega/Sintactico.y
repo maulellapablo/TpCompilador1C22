@@ -311,13 +311,10 @@ int main(int argc,char *argv[])
   return 0;
 }
 
-int agregarTipoEnTablaSimbolos(char* nombre, int contadorTipos, int esConstante)
+int agregarTipoEnTablaSimbolos(char* nombre, int contadorTipos)
 {     
 		int i;          
-        char lexema[50]; 
-		lexema[0]='_';
-		lexema[1]='\0';
-		strcat(lexema,nombre);
+        char lexema[50];
                  
 		for(i = 0; i < puntero_array; i++)
 		{
