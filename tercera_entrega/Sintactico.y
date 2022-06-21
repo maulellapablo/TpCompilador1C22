@@ -116,7 +116,7 @@ char * str;
 }
 
 %%
-start: programa {ptr_star = ptr_prog; inOrder(&ptr_star, f_intermedia, &tablaSimbolos);};
+start: programa {ptr_star = ptr_prog; inOrder(&ptr_star, f_intermedia);};
 
 programa: PROGRAM zona_declaracion algoritmo END {ptr_prog = crearNodo("programa", ptr_algo, NULL); printf("\n***** Compilacion exitosa: OK *****\n");};
 				  
