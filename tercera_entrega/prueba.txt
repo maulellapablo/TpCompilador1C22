@@ -2,7 +2,7 @@ program
 decvar 
 int1,int2 : int
 float1, float2 : float
-cadena : string
+cadena, valorTeclado : string
 enddec
 
 
