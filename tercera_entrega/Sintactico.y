@@ -33,6 +33,7 @@ void escribirEnTablaSimbolos();
 
 FILE *f_intermedia;
 FILE *f_dot_arbol;
+FILE *f_asm;
 
 // Declaración punteros arbol
 t_nodo* ptr_star; //star
@@ -302,6 +303,11 @@ int main(int argc,char *argv[])
 	return 1;
   }
 
+  if ((f_asm = fopen("Final.asm", "wt")) == NULL){
+	printf("\nERROR! No se pudo abrir el archivo Final.asm para armar el programa\n");
+	return 1;
+  }
+
 
   or_flag = and_flag = 0;
   
@@ -314,7 +320,7 @@ int main(int argc,char *argv[])
   return 0;
 }
 
-int agregarTipoEnTablaSimbolos(char* nombre, int contadorTipos)
+int agregarTipoEnTablaSimbolos(char* nombre, int contadorTipos, int esConstante)
 {     
 		int i;          
         char lexema[50]; 
