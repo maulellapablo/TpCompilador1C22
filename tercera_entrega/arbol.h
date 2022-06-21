@@ -112,7 +112,7 @@ char* replace_char(char* str, char find, char replace){
     return str;
 }
 
-void generarAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts){
+void generarAssembler(t_arbol *pa, FILE *f_asm, struct struct_tablaSimbolos* ts){
 	char Linea[300];
 
 	FILE *f_temp = fopen("Temp.asm", "wt");
