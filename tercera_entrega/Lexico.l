@@ -171,16 +171,13 @@ int guardarEnTablaSimbolos(char* tipo, char* nombre){
 		
 	strcpy(tablaSimbolos[puntero_array].nombre, lexema );
 
-	if(strcmp(tipo,"CTE")!=0){
-		tablaSimbolos[puntero_array].tipo[0]='\0';
-	}else{
-		if(strcmp(tipo,"CTE_ENTERA")==0)
-			strcpy(tablaSimbolos[puntero_array].tipo, "int");
-		if(strcmp(tipo,"CTE_STRING")==0)
-			strcpy(tablaSimbolos[puntero_array].tipo, "string");
-		if(strcmp(tipo,"CTE_REAL")==0)
-			strcpy(tablaSimbolos[puntero_array].tipo, "float");
-	}
+	tablaSimbolos[puntero_array].tipo[0]='\0';
+	if(strcmp(tipo,"CTE_ENTERA")==0)
+		strcat(tablaSimbolos[puntero_array].tipo, "int");
+	if(strcmp(tipo,"CTE_STRING")==0)
+		strcat(tablaSimbolos[puntero_array].tipo, "string");
+	if(strcmp(tipo,"CTE_REAL")==0)
+		strcat(tablaSimbolos[puntero_array].tipo, "float");
 
 	//En caso de ser una CTE string, se cuentan los caracteres y se guardan en la tabla de simbolos
 	if(tablaSimbolos[i].valor[0] == '\"')

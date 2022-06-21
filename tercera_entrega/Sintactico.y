@@ -313,12 +313,9 @@ int main(int argc,char *argv[])
 
 int agregarTipoEnTablaSimbolos(char* nombre, int contadorTipos)
 {     
-		int i;          
-        char lexema[50];
-                 
-		for(i = 0; i < puntero_array; i++)
+		for(int i = 0; i < puntero_array; i++)
 		{
-			if(strcmp(tablaSimbolos[i].nombre, lexema) == 0)
+			if(strcmp(tablaSimbolos[i].nombre, nombre) == 0)
 			{
 				if(tablaSimbolos[i].tipo[0] == '\0')
 				strcpy(tablaSimbolos[i].tipo,matrizTipoDato[contadorTipos]);
