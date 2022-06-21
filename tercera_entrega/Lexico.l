@@ -70,9 +70,9 @@ COMENTARIOS		{COM_INI}(.)+{COM_INI}"\n"{COM_INI}(.)+{COM_FIN}
 "or"			{ return OP_LOG_OR; }
 "not"			{ return OP_LOG_NOT; } 
 
-{CTE_ENTERA}	{ validarCotaEntero(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.num = strdup(yytext); return CTE_ENTERA;}
-{CTE_REAL}		{ validarCotaReal(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.real = strdup(yytext); return CTE_REAL; }
-{CTE_STRING}	{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.real = strdup(yytext); return CTE_STRING; }
+{CTE_ENTERA}	{ validarCotaEntero(yytext); guardarEnTablaSimbolos("CTE_ENTERA",yytext); yylval.num = strdup(yytext); return CTE_ENTERA;}
+{CTE_REAL}		{ validarCotaReal(yytext); guardarEnTablaSimbolos("CTE_REAL",yytext); yylval.real = strdup(yytext); return CTE_REAL; }
+{CTE_STRING}	{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("CTE_STRING",yytext); yylval.real = strdup(yytext); return CTE_STRING; }
 {ID}			{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("ID",yytext); yylval.strid = strdup(yytext); return ID; }
 {COMENTARIO}	{ printf("\nComentario que sera descartado:  %s\n",yytext); }
 {COMENTARIOS}	{ printf("\nComentario anidado que sera descartado:  %s\n",yytext); }
@@ -143,8 +143,9 @@ int guardarEnTablaSimbolos(char* tipo, char* nombre){
 	int i;
 	int posicion;
 	char lexema[50];
+	char aux[50];
 
-	if(strcmp(tipo,"CTE")==0){
+	if(strcmp(strncpy(aux, tipo, 3),"CTE")==0){
 		lexema[0]='_';
 		lexema[1]='\0';
 		//Se anexa al lexema un guion bajo al inicio
@@ -164,7 +165,7 @@ int guardarEnTablaSimbolos(char* tipo, char* nombre){
 	}
 	
 	//En caso de ser una CTE, guardamos el Valor en la tabla de simbolos
-	if(strcmp(tipo,"CTE")==0)
+	if(strcmp(strncpy(aux, tipo, 3),"CTE")==0)
 		strcpy(tablaSimbolos[puntero_array].valor, nombre);
 	else
 		tablaSimbolos[puntero_array].valor[0]='\0';
