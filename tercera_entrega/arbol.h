@@ -24,9 +24,9 @@ t_nodo* crearHoja( char* lexema);
 t_nodo* crearNodo( char* lexema, t_nodo* hijoIzq, t_nodo* hijoDer);
 void inOrden(t_arbol *pa, FILE *pIntermedia);
 char* replace_char(char* str, char find, char replace);
-void generarAssembler(t_arbol *pa, FILE *f);
-void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos* ts, FILE* f);
-t_arbol* recorrerArbol(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts);
+void generarAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts);
+void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos *ts, FILE *f);
+t_arbol* recorrerArbol(t_arbol *pa, FILE *f, struct struct_tablaSimbolos *ts);
 
 t_nodo* crearHoja( char* lexema){
     t_nodo* nodo = (t_nodo*) malloc (sizeof(t_nodo));
@@ -112,12 +112,12 @@ char* replace_char(char* str, char find, char replace){
     return str;
 }
 
-void generarAssembler(t_arbol *pa, FILE *f){
+void generarAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts){
 	char Linea[300];
 
 	FILE *f_temp = fopen("Temp.asm", "wt");
 
-	while(recorrerArbol(pArbol,f_temp, &tablaSimbolos) != pArbol){}
+	while(recorrerArbol(pa, f_temp, ts) != pa){}
  
 	fclose(f_temp);
 
@@ -125,7 +125,7 @@ void generarAssembler(t_arbol *pa, FILE *f){
 
 	fprintf(f_asm, "include macros2.asm\ninclude number.asm\n.MODEL LARGE	; Modelo de Memoria\n.386	        ; Tipo de Procesador\n.STACK 200h		; Bytes en el Stack\n\n.DATA \n\n");
 
-	printTablaDeSimbolosAsm(&tablaSimbolos, f_asm);
+	printTablaDeSimbolosAsm(ts, f_asm);
 
 	fprintf(f_asm, "\n\n.Temp\n\nmov AX,@DATA    ; Inicializa el segmento de datos\nmov DS,AX\nmov es,ax ;\n\n");
 
@@ -145,19 +145,19 @@ void generarAssembler(t_arbol *pa, FILE *f){
 
 void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos* ts, FILE* f){
     for(int i = 0; i < sizeof(*ts) / sizeof(struct struct_tablaSimbolos); i++){
-       if((!strncmp((*ts[i])->nombre, "_", 1)) && (strcmp((*ts[i])->tipo, "int") == 0)) //Es CTE Entera
+       if((!strncmp(ts[i].nombre, "_", 1)) && (strcmp(ts[i].tipo, "int") == 0)) //Es CTE Entera
         {
-            strcat((*ts[i])->valor, ".00");
-            fprintf(f, "%-30s%-30s%-30s%-s %-s\n", (*ts[i])->nombre, "dd", (*ts[i])->valor, ";Cte en formato ", (*ts[i])->tipo);
+            strcat(ts[i].valor, ".00");
+            fprintf(f, "%-30s%-30s%-30s%-s %-s\n", ts[i].nombre, "dd", ts[i].valor, ";Cte en formato ", ts[i].tipo);
         }
-        else if(!strncmp((*ts[i])->nombre, "_", 1)) { // Es CTE
-            if(strcmp((*ts[i])->tipo,"string") == 0)
-				fprintf(f, "%-30s%-30s \"%s\"%-26s%-30s %-s\n", str_replace((*ts[i])->nombre," ","_"), "dd", (*ts[i])->valor, "", ";Cte en formato ", (*ts[i])->tipo);
+        else if(!strncmp(ts[i].nombre, "_", 1)) { // Es CTE
+            if(strcmp(ts[i].tipo,"string") == 0)
+				fprintf(f, "%-30s%-30s \"%s\"%-26s%-30s %-s\n", str_replace(ts[i].nombre," ","_"), "dd", ts[i].valor, "", ";Cte en formato ", ts[i].tipo);
 			else
-				fprintf(f, "%-30s%-30s%-30s%-s %-s\n", str_replace((*ts[i])->nombre," ","_"), "dd", (*ts[i])->valor, ";Cte en formato ", (*ts[i])->tipo);
+				fprintf(f, "%-30s%-30s%-30s%-s %-s\n", str_replace(ts[i].nombre," ","_"), "dd", ts[i].valor, ";Cte en formato ", ts[i].tipo);
 		}
-        else if(strncmp((*ts[i])->nombre, "_", 1)) //Es variable
-            fprintf(f, "%-30s%-30s%-30s%-s %-s\n", (*ts[i])->nombre, "dd", "?", ";Variable", (*ts[i])->tipo);
+        else if(strncmp(ts[i].nombre, "_", 1)) //Es variable
+            fprintf(f, "%-30s%-30s%-30s%-s %-s\n", ts[i].nombre, "dd", "?", ";Variable", ts[i].tipo);
     }
 }
 
