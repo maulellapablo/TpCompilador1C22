@@ -152,9 +152,9 @@ void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos* ts, FILE* f){
         }
         else if(!strncmp(ts[i].nombre, "_", 1)) { // Es CTE
             if(strcmp(ts[i].tipo,"string") == 0)
-				fprintf(f, "%-30s%-30s \"%s\"%-26s%-30s %-s\n", replace_char(ts[i].nombre," ","_"), "dd", ts[i].valor, "", ";Cte en formato ", ts[i].tipo);
+				fprintf(f, "%-30s%-30s \"%s\"%-26s%-30s %-s\n", replace_char(ts[i].nombre,' ','_'), "dd", ts[i].valor, "", ";Cte en formato ", ts[i].tipo);
 			else
-				fprintf(f, "%-30s%-30s%-30s%-s %-s\n", replace_char(ts[i].nombre," ","_"), "dd", ts[i].valor, ";Cte en formato ", ts[i].tipo);
+				fprintf(f, "%-30s%-30s%-30s%-s %-s\n", replace_char(ts[i].nombre,' ','_'), "dd", ts[i].valor, ";Cte en formato ", ts[i].tipo);
 		}
         else if(strncmp(ts[i].nombre, "_", 1)) //Es variable
             fprintf(f, "%-30s%-30s%-30s%-s %-s\n", ts[i].nombre, "dd", "?", ";Variable", ts[i].tipo);
