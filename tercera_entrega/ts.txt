@@ -1,20 +1,22 @@
 |Nombre                        |Tipo           |Valor                           |Longitud|
 ------------------------------------------------------------------------------------------
-|_int1                         |int            |                                |0       |
-|_int2                         |int            |                                |0       |
-|_float1                       |float          |                                |0       |
-|_float2                       |float          |                                |0       |
-|_cadena                       |string         |                                |0       |
-|_1                            |               |1                               |0       |
-|_2.1                          |               |2.1                             |0       |
-|_"valor de la cadena"         |               |"valor de la cadena"            |18      |
-|_valorTeclado                 |               |                                |0       |
-|_"Condicion verdadera"        |               |"Condicion verdadera"           |19      |
-|_2                            |               |2                               |0       |
-|_"Condicion verdadera and"    |               |"Condicion verdadera and"       |23      |
-|_5                            |               |5                               |0       |
-|_"Condicion verdadera or"     |               |"Condicion verdadera or"        |22      |
-|_"Condicion verdadera not"    |               |"Condicion verdadera not"       |23      |
-|_4                            |               |4                               |0       |
-|_"Condicion falsa"            |               |"Condicion falsa"               |15      |
-|_"Funciona perfectamente"     |               |"Funciona perfectamente"        |22      |
+|int1                          |int            |                                |0       |
+|int2                          |int            |                                |0       |
+|float1                        |float          |                                |0       |
+|float2                        |float          |                                |0       |
+|cadena                        |string         |                                |0       |
+|valorTeclado                  |string         |                                |0       |
+|_1                            |int            |1                               |0       |
+|_2.1                          |float          |2.1                             |0       |
+|_"valor de la cadena"         |string         |"valor de la cadena"            |18      |
+|_"Condicion verdadera"        |string         |"Condicion verdadera"           |19      |
+|1                             |int            |                                |0       |
+|2                             |int            |                                |0       |
+|_"Condicion verdadera and"    |string         |"Condicion verdadera and"       |23      |
+|5                             |int            |                                |0       |
+|_"Condicion verdadera or"     |string         |"Condicion verdadera or"        |22      |
+|_"Condicion verdadera not"    |string         |"Condicion verdadera not"       |23      |
+|_2                            |int            |2                               |0       |
+|_4                            |int            |4                               |0       |
+|_"Condicion falsa"            |string         |"Condicion falsa"               |15      |
+|"Funciona perfectamente"      |string         |                                |0       |
