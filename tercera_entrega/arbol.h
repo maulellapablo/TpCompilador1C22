@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ts.h"
 
 typedef struct nodo{
     struct nodo* izq;
@@ -26,7 +27,12 @@ void inOrden(t_arbol *pa, FILE *pIntermedia);
 char* replace_char(char* str, char find, char replace);
 void generarAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts);
 void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos *ts, FILE *f);
-t_arbol* recorrerArbol(t_arbol *pa, FILE *f, struct struct_tablaSimbolos *ts);
+t_arbol* inOrderAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos *ts);
+int esHoja(t_arbol* pa);
+
+extern struct struct_tablaSimbolos tablaSimbolos[1000]; 
+extern int puntero_array;
+int contAux = 0;
 
 t_nodo* crearHoja( char* lexema){
     t_nodo* nodo = (t_nodo*) malloc (sizeof(t_nodo));
@@ -117,7 +123,7 @@ void generarAssembler(t_arbol *pa, FILE *f_asm, struct struct_tablaSimbolos* ts)
 
 	FILE *f_temp = fopen("Temp.asm", "wt");
 
-	while(recorrerArbol(pa, f_temp, ts) != pa){}
+	while(inOrderAssembler(pa, f_temp, ts) != pa){}
  
 	fclose(f_temp);
 
@@ -161,8 +167,115 @@ void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos* ts, FILE* f){
     }
 }
 
-t_arbol* recorrerArbol(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts){
-    return pa;
+int esHoja(t_arbol* pa){
+    if(!*pa)
+        return 0;
+ 
+    return (!(*pa)->izq) && (!(*pa)->der);
+}
+
+t_arbol* inOrderAssembler(t_arbol *pa, FILE *f){
+
+    if(*pa==NULL )
+        return NULL;
+    
+    if(strcmp((*pa)->data, "ciclo")==0 ){
+        traduccionAssembler(pa,f);
+    }
+    inOrderAssembler(&(*pa)->izq, f);
+ 
+     if(strcmp((*pa)->data, "bloque")==0 ){
+        traduccionAssembler(pa,f);
+    }
+   
+    inOrderAssembler(&(*pa)->der, f);
+
+    if(esHoja(&(*pa)->izq) && ((esHoja(&(*pa)->der)) || (*pa)->der == NULL)){
+        traduccionAssembler(pa,f);
+        return pa;
+    }
+}
+
+void traduccionAssembler(t_arbol* pa, FILE* f){
+       if(!*pa)
+        return;
+        char cadena[50]="";
+        if(strcmp((*pa)->data, ">")==0 ){
+            strcat(cadena,"JNA\0");
+             traduccionCond(pa,f,cadena);
+            return;
+        }else if (strcmp((*pa)->data, "<")==0 ){
+            strcat(cadena,"JNB\0");
+             traduccionCond(pa,f,cadena);
+            return;
+        }else if (strcmp((*pa)->data, ">=")==0 ){
+            strcat(cadena,"JNAE\0");
+             traduccionCond(pa,f,cadena);
+            return;
+        }else if (strcmp((*pa)->data, "<=")==0 ){
+             strcat(cadena,"JNBE\0");
+             traduccionCond(pa,f,cadena);
+            return;
+        }else if (strcmp((*pa)->data, "==")==0 ){
+             strcat(cadena,"JNE\0");
+             traduccionCond(pa,f,cadena); 
+            return;
+        }else if (strcmp((*pa)->data, "!=")==0 ){
+             strcat(cadena,"JE\0");
+             traduccionCond(pa,f,cadena);
+            return;
+        }
+
+    int tam=strlen("bloque");
+    strncpy( cadena, (*pa)->data, tam);
+    cadena[tam]='\0';
+    if(strcmp(cadena, "bloque")!=0 && strcmp(cadena, "sub_bloque")!=0 ){
+        if(strcmp((*pa)->data,":=")!=0)
+            fprintf(f,"FLD %s\n", ((*pa)->izq)->data);
+        fprintf(f,"FLD %s\n",((*pa)->der)->data);
+    
+        if(strcmp((*pa)->data, "+")==0)
+            fprintf(f,"FADD \n");
+        else if(strcmp((*pa)->data, "-")==0)
+            fprintf(f,"FSUB \n");
+        else if(strcmp((*pa)->data, "/")==0)
+            fprintf(f,"FDIV \n");
+        else if(strcmp((*pa)->data, "*")==0)
+            fprintf(f,"FMUL \n");
+        
+        if(strcmp((*pa)->data,":=")==0){
+            fprintf(f,"FSTP %s\n",((*pa)->izq)->data);    
+        }else{
+            sprintf(cadena,"@Aux%d",++contAux);
+            fprintf(f,"FSTP %s\n",cadena);
+            strcpy((*pa)->data, cadena);
+            guardarEnTablaSimbolos("float", cadena);
+        }
+        fprintf(f,"FFREE\n"); 
+    }
+    free((*pa)->izq);
+    free((*pa)->der);
+
+    (*pa)->izq = NULL;
+    (*pa)->der = NULL;
+}
+
+void traduccionCond(t_arbol* pa, FILE* f, char* salto){
+     if(!*pa)
+        return;
+	
+	fprintf(f,"FLD %s%s\n",es_const(((*pa)->izq)->info)? "_":"",((*pa)->izq)->info);
+	fprintf(f,"FCOMP %s%s\n",es_const(((*pa)->der)->info)? "_":"",((*pa)->der)->info);
+    fprintf(f,"FSTSW ax\n");
+    fprintf(f,"SAHF\n");
+    sprintf(str_Salto, "saltoelse%d", contSalto);
+    fprintf(f,"%s %s\n", salto, str_Salto);
+
+     free((*pa)->izq);
+     free((*pa)->der);
+
+    (*pa)->izq = NULL;
+    (*pa)->der = NULL;
 }
 
 #endif // ARBOL_H_INCLUDED
