@@ -264,8 +264,8 @@ void traduccionCond(t_arbol* pa, FILE* f, char* salto){
      if(!*pa)
         return;
 	
-	fprintf(f,"FLD %s%s\n",es_const(((*pa)->izq)->info)? "_":"",((*pa)->izq)->info);
-	fprintf(f,"FCOMP %s%s\n",es_const(((*pa)->der)->info)? "_":"",((*pa)->der)->info);
+	fprintf(f,"FLD %s%s\n",es_const(((*pa)->izq)->data)? "_":"",((*pa)->izq)->data);
+	fprintf(f,"FCOMP %s%s\n",es_const(((*pa)->der)->data)? "_":"",((*pa)->der)->data);
     fprintf(f,"FSTSW ax\n");
     fprintf(f,"SAHF\n");
     sprintf(str_Salto, "saltoelse%d", contSalto);
