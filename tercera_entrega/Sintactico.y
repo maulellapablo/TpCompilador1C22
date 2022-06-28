@@ -263,9 +263,9 @@ termino:		termino OP_MULT factor { printf(" factor"); ptr_term=crearNodo("*",ptr
                          
 
 factor:			ID {ptr_fact = crearHoja($1); }
-				|CTE_ENTERA {auxTipoDato = "_"; ptr_fact = crearHoja(strcat(auxTipoDato. $1)); }
-				|CTE_REAL {auxTipoDato = "_"; ptr_fact = crearHoja(strcat(auxTipoDato. $1)); }
-				|CTE_STRING {auxTipoDato = "_"; ptr_fact = crearHoja(strcat(auxTipoDato. $1)); }
+				|CTE_ENTERA {auxTipoDato = "_"; ptr_fact = crearHoja(strcat(auxTipoDato, $1)); }
+				|CTE_REAL {auxTipoDato = "_"; ptr_fact = crearHoja(strcat(auxTipoDato, $1)); }
+				|CTE_STRING {auxTipoDato = "_"; ptr_fact = crearHoja(strcat(auxTipoDato, $1)); }
 				|PAR_A expresion PAR_C {;}
 				;
  
