@@ -19,7 +19,7 @@ void inOrden(t_arbol *pa, FILE *pIntermedia);
 char* replace_char(char* str, char find, char replace);
 void generarAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts);
 void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos *ts, FILE *f);
-t_arbol* inOrderAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos *ts);
+t_arbol* inOrderAssembler(t_arbol *pa, FILE *f);
 int esHoja(t_arbol* pa);
 
 extern struct struct_tablaSimbolos tablaSimbolos[1000]; 
