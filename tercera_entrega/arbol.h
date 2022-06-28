@@ -13,14 +13,6 @@ typedef struct nodo{
 
 typedef t_nodo* t_arbol;
 
-struct struct_tablaSimbolos
-{
-	char nombre[100];
-	char tipo[100];
-	char valor[50];
-	char longitud[100];
-};
-
 t_nodo* crearHoja( char* lexema);
 t_nodo* crearNodo( char* lexema, t_nodo* hijoIzq, t_nodo* hijoDer);
 void inOrden(t_arbol *pa, FILE *pIntermedia);
