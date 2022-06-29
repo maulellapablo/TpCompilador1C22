@@ -171,27 +171,27 @@ int esHoja(t_arbol* pa){
 
 void invertirOperador(t_nodo* n){
     if(n->data == "=="){
-        strcpy(nodo->data, "!=");
+        strcpy(n->data, "!=");
         return;
     }
     if(n->data == "!="){
-        strcpy(nodo->data, "==");
+        strcpy(n->data, "==");
         return;
     }
     if(n->data == "<"){
-        strcpy(nodo->data, ">=");
+        strcpy(n->data, ">=");
         return;
     }
     if(n->data == ">="){
-        strcpy(nodo->data, "<");
+        strcpy(n->data, "<");
         return;
     }
     if(n->data == ">"){
-        strcpy(nodo->data, "<=");
+        strcpy(n->data, "<=");
         return;
     }
     if(n->data == "<="){
-        strcpy(nodo->data, ">");
+        strcpy(n->data, ">");
         return;
     }
 }
