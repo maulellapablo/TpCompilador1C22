@@ -191,7 +191,7 @@ seleccion: 		IF  PAR_A condicion PAR_C THEN sub_bloque ENDIF {
 condicion:		comparacion {ptr_cond = ptr_comp;}
 				|comparacion OP_LOG_AND {ptr_cond_aux = ptr_comp; } comparacion {and_flag = 1;ptr_cond = ptr_comp;}
 				|comparacion OP_LOG_OR {ptr_cond_aux = ptr_comp; } comparacion	{or_flag = 1;ptr_cond = ptr_comp;}
-				|OP_LOG_NOT comparacion {invertirOperador(ptr_comp;); ptr_cond = ptr_comp;}
+				|OP_LOG_NOT comparacion {invertirOperador(ptr_comp); ptr_cond = ptr_comp;}
 				|inlist { ptr_cond = ptr_inli; printf(" - inlist - OK \n"); };
 				|between { ptr_cond = ptr_betw; printf(" - between - OK \n"); };
 
