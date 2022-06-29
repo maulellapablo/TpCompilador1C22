@@ -21,10 +21,13 @@ void generarAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts);
 void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos *ts, FILE *f);
 t_arbol* inOrderAssembler(t_arbol *pa, FILE *f);
 int esHoja(t_arbol* pa);
+void invertirOperador(t_nodo* n);
 
 extern struct struct_tablaSimbolos tablaSimbolos[1000]; 
 extern int puntero_array;
 int contAux = 0;
+int contSalto = 0;
+char str_aux[20];
 
 t_nodo* crearHoja( char* lexema){
     t_nodo* nodo = (t_nodo*) malloc (sizeof(t_nodo));
@@ -166,6 +169,33 @@ int esHoja(t_arbol* pa){
     return (!(*pa)->izq) && (!(*pa)->der);
 }
 
+void invertirOperador(t_nodo* n){
+    if(n->data == "=="){
+        strcpy(nodo->data, "!=");
+        return;
+    }
+    if(n->data == "!="){
+        strcpy(nodo->data, "==");
+        return;
+    }
+    if(n->data == "<"){
+        strcpy(nodo->data, ">=");
+        return;
+    }
+    if(n->data == ">="){
+        strcpy(nodo->data, "<");
+        return;
+    }
+    if(n->data == ">"){
+        strcpy(nodo->data, "<=");
+        return;
+    }
+    if(n->data == "<="){
+        strcpy(nodo->data, ">");
+        return;
+    }
+}
+
 t_arbol* inOrderAssembler(t_arbol *pa, FILE *f){
 
     if(*pa==NULL )
@@ -269,5 +299,6 @@ void traduccionCond(t_arbol* pa, FILE* f, char* salto){
     (*pa)->izq = NULL;
     (*pa)->der = NULL;
 }
+
 
 #endif // ARBOL_H_INCLUDED
