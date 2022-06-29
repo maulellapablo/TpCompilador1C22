@@ -115,7 +115,7 @@ void generarAssembler(t_arbol *pa, FILE *f_asm, struct struct_tablaSimbolos* ts)
 
 	FILE *f_temp = fopen("Temp.asm", "wt");
 
-	while(inOrderAssembler(pa, f_temp, ts) != pa){}
+	while(inOrderAssembler(pa, f_temp) != pa){}
  
 	fclose(f_temp);
 
