@@ -5,13 +5,6 @@
 #include <math.h>
 #include "y.tab.h"
 
-
-struct struct_tablaSimbolos{
-	char nombre[100];
-	char tipo[100];
-	char valor[50];
-	char longitud[100];
-};
 char buffer[30];
 FILE *yyin;
 extern struct struct_tablaSimbolos tablaSimbolos[1000]; 
