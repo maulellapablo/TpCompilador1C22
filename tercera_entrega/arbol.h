@@ -132,13 +132,14 @@ void invertirOperador(t_nodo* n){
 void generarAssembler(t_arbol *pa, FILE *f_asm, struct struct_tablaSimbolos* ts){
 	char Linea[300];
 
-	// FILE *f_temp = fopen("Temp.asm", "wt");
-
-	// while(inOrderAssembler(pa, f_temp) != pa){}
+	FILE *f_temp = fopen("Temp.asm", "wt");
+    printf("\n\n Inorder ASSEMBLER");
+	//while(inOrderAssembler(pa, f_temp) != pa){}
+    inOrderAssembler(pa, f_temp);
  
-	// fclose(f_temp);
+	fclose(f_temp);
 
-	// f_temp = fopen("Temp.asm", "rt");
+	f_temp = fopen("Temp.asm", "rt");
 
 	fprintf(f_asm, "include macros2.asm\ninclude number.asm\n.MODEL LARGE	; Modelo de Memoria\n.386	        ; Tipo de Procesador\n.STACK 200h		; Bytes en el Stack\n\n.DATA \n\n");
 
@@ -146,18 +147,17 @@ void generarAssembler(t_arbol *pa, FILE *f_asm, struct struct_tablaSimbolos* ts)
 
 	fprintf(f_asm, "\n\n.Temp\n\nmov AX,@DATA    ; Inicializa el segmento de datos\nmov DS,AX\nmov es,ax ;\n\n");
 
-	// while(fgets(Linea, sizeof(Linea), f_temp))
-	// {
-	// 	fprintf(f_asm, Linea);
-	// }
+	while(fgets(Linea, sizeof(Linea), f_temp))
+	{
+		fprintf(f_asm, Linea);
+	}
 
-	// fprintf(f_asm, "\n\n\nmov ax,4c00h	; Indica que debe finalizar la ejecución\nint 21h\n\nEnd");
+	fclose(f_temp);
+	remove("Temp.asm");
 
-	// fclose(f_temp);
+	fprintf(f_asm, "\n\n\nmov ax,4c00h	; Indica que debe finalizar la ejecución\nint 21h\n\nEnd\n");
 
-	// remove("Temp.asm");
-
-	// fclose(f_asm);
+	fclose(f_asm);
 }
 
 void  printTablaDeSimbolosAsm(FILE* f){
@@ -189,64 +189,73 @@ int esHoja(t_arbol* pa){
 
 t_arbol* inOrderAssembler(t_arbol *pa, FILE *f){
 
-    if(*pa==NULL )
+    if(!*pa)
         return NULL;
     
-    if(strcmp((*pa)->data, "ciclo")==0 ){
-        traduccionAssembler(pa,f);
-    }
+    // if(strcmp((*pa)->data, "ciclo")==0 ){
+    //     traduccionAssembler(pa,f);
+    // }
     inOrderAssembler(&(*pa)->izq, f);
  
-     if(strcmp((*pa)->data, "bloque")==0 ){
-        traduccionAssembler(pa,f);
-    }
+    //  if(strcmp((*pa)->data, "bloque")==0 ){
+    //     printf("\nBLOQUE\n");
+    //     traduccionAssembler(pa,f);
+    // }
+
    
     inOrderAssembler(&(*pa)->der, f);
 
     if(esHoja(&(*pa)->izq) && ((esHoja(&(*pa)->der)) || (*pa)->der == NULL)){
+        printf("\n\n TRADUCCIR, %d %d\n",esHoja(&(*pa)->izq),esHoja(&(*pa)->der));
+        printf("\nIZQ: %s\n",(*pa)->izq->data);
         traduccionAssembler(pa,f);
         return pa;
     }
+
+    //printf("%s", (*pa)->data);
 }
 
 void traduccionAssembler(t_arbol* pa, FILE* f){
-       if(!*pa)
+    if(!*pa)
         return;
-        char cadena[50]="";
-        if(strcmp((*pa)->data, ">")==0 ){
-            strcat(cadena,"JNA\0");
-             traduccionCond(pa,f,cadena);
-            return;
-        }else if (strcmp((*pa)->data, "<")==0 ){
-            strcat(cadena,"JNB\0");
-             traduccionCond(pa,f,cadena);
-            return;
-        }else if (strcmp((*pa)->data, ">=")==0 ){
-            strcat(cadena,"JNAE\0");
-             traduccionCond(pa,f,cadena);
-            return;
-        }else if (strcmp((*pa)->data, "<=")==0 ){
-             strcat(cadena,"JNBE\0");
-             traduccionCond(pa,f,cadena);
-            return;
-        }else if (strcmp((*pa)->data, "==")==0 ){
-             strcat(cadena,"JNE\0");
-             traduccionCond(pa,f,cadena); 
-            return;
-        }else if (strcmp((*pa)->data, "!=")==0 ){
-             strcat(cadena,"JE\0");
-             traduccionCond(pa,f,cadena);
-            return;
-        }
+    if((strcmp((*pa)->data,"programa") == 0))
+        return;
+    char cadena[50]="";
+    // if(strcmp((*pa)->data, ">")==0 ){
+    //     strcat(cadena,"JNA\0");
+    //         traduccionCond(pa,f,cadena);
+    //     return;
+    // }else if (strcmp((*pa)->data, "<")==0 ){
+    //     strcat(cadena,"JNB\0");
+    //         traduccionCond(pa,f,cadena);
+    //     return;
+    // }else if (strcmp((*pa)->data, ">=")==0 ){
+    //     strcat(cadena,"JNAE\0");
+    //         traduccionCond(pa,f,cadena);
+    //     return;
+    // }else if (strcmp((*pa)->data, "<=")==0 ){
+    //         strcat(cadena,"JNBE\0");
+    //         traduccionCond(pa,f,cadena);
+    //     return;
+    // }else if (strcmp((*pa)->data, "==")==0 ){
+    //         strcat(cadena,"JNE\0");
+    //         traduccionCond(pa,f,cadena); 
+    //     return;
+    // }else if (strcmp((*pa)->data, "!=")==0 ){
+    //         strcat(cadena,"JE\0");
+    //         traduccionCond(pa,f,cadena);
+    //     return;
+    // }
 
     int tam=strlen("bloque");
-    strncpy( cadena, (*pa)->data, tam);
+    strncpy(cadena, (*pa)->data, tam);
     cadena[tam]='\0';
     if(strcmp(cadena, "bloque")!=0 && strcmp(cadena, "sub_bloque")!=0 ){
+        //printf("NODO %s\n\t\t%s\n\t\t%s\n", (*pa)->data,(*pa)->izq->data,(*pa)->der->data);
         if(strcmp((*pa)->data,":=")!=0)
             fprintf(f,"FLD %s\n", ((*pa)->izq)->data);
         fprintf(f,"FLD %s\n",((*pa)->der)->data);
-    
+        //printf("HOLA2");
         if(strcmp((*pa)->data, "+")==0)
             fprintf(f,"FADD \n");
         else if(strcmp((*pa)->data, "-")==0)
@@ -267,10 +276,10 @@ void traduccionAssembler(t_arbol* pa, FILE* f){
         }
         fprintf(f,"FFREE\n"); 
     }
-    free((*pa)->izq);
-    free((*pa)->der);
 
+    free((*pa)->izq);
     (*pa)->izq = NULL;
+    free((*pa)->der);
     (*pa)->der = NULL;
 }
 
