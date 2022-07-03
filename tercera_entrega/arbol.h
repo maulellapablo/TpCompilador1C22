@@ -262,7 +262,8 @@ void traduccionAssembler(t_arbol* pa, FILE* f){
             sprintf(cadena,"@Aux%d",++contAux);
             fprintf(f,"FSTP %s\n",cadena);
             strcpy((*pa)->data, cadena);
-            guardarEnTablaSimbolos(TS_FLOAT, cadena);
+            guardarEnTablaSimbolos(TS_ID, cadena);
+            agregarTipoSimbolo(cadena, TS_FLOAT);
         }
         fprintf(f,"FFREE\n"); 
     }

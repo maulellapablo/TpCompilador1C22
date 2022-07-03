@@ -8,6 +8,7 @@
 #define TS_FLOAT 2
 #define TS_STRING 3
 #define TS_ID 4
+#define TS_AUX 5
 
 struct struct_tablaSimbolos
 {
@@ -26,6 +27,7 @@ void validarSimbolo(char*);
 void validarTipoSimbolo(char*, int);
 char* replace_char(char* str, char find, char replace);
 void removeChar(char *str, char garbage);
+void agregarTipoSimbolo(char *nombre, int tipo);
 
 // Función de ayuda, replace string
 char* replace_char(char* str, char find, char replace){
@@ -86,20 +88,19 @@ int guardarEnTablaSimbolos(int tipo, char* nombre){
 	//En caso de ser una CTE, guardamos el Valor en la tabla de simbolos
 	if(tipo != TS_ID){
 		strcat(tablaSimbolos[puntero_array].valor, aux_valor);
-		printf("valor: %s, auxvalor:%s\n",tablaSimbolos[puntero_array].valor, aux_valor);
 	}
 		
 	strcpy(tablaSimbolos[puntero_array].nombre, nombre);
 
 	tablaSimbolos[puntero_array].tipo[0]='\0';
 	switch(tipo){
-		case CTE_ENTERA:
+		case TS_INT:
 			strcat(tablaSimbolos[puntero_array].tipo, "int");
 			break;
-		case CTE_STRING:
+		case TS_STRING:
 			strcat(tablaSimbolos[puntero_array].tipo, "string");
 			break;
-		case CTE_REAL:
+		case TS_FLOAT:
 			strcat(tablaSimbolos[puntero_array].tipo, "float");
 			break;
 	}
@@ -189,6 +190,39 @@ void validarTipoSimbolo(char* lexema, int tipo){
 				printf("ERROR! La variable %s de tipo %s no es una string!",tablaSimbolos[pos].nombre, tablaSimbolos[pos].tipo);
 				exit(0);
 			}
+			break;
+	}
+}
+
+void agregarTipoSimbolo(char* lexema, int tipo){
+	int pos = -1;
+
+	char aux[50];
+	strcpy(aux, lexema);
+	replace_char(aux,' ','_');
+	removeChar(aux,'"');
+
+	for(int i = 0; i < puntero_array; i++) {
+		if(strcmp(tablaSimbolos[i].nombre, aux) == 0){
+			pos = i;
+			break;
+		}
+	}
+
+	if(pos == -1){
+		printf("ERROR! La variable %s no se encuentra definida", aux);
+		exit(0);
+	}
+	tablaSimbolos[pos].tipo[0]='\0';
+	switch(tipo){
+		case TS_INT:
+			strcat(tablaSimbolos[pos].tipo, "int");
+			break;
+		case TS_STRING:
+			strcat(tablaSimbolos[pos].tipo, "string");
+			break;
+		case TS_FLOAT:
+			strcat(tablaSimbolos[pos].tipo, "float");
 			break;
 	}
 }

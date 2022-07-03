@@ -214,9 +214,9 @@ inlist:			INLIST PAR_A ID {ptr_inli_id = crearHoja($3);} PUN_Y_COM COR_A lista_e
 lista_expresiones:	lista_expresiones PUN_Y_COM expresion {
 						ptr_list_exp = crearNodo("list_exp",
 											crearNodo(";",
-												crearNodo(":=", crearHoja("@aux"), ptr_expr),
+												crearNodo(":=", crearHoja("@aux_inlist"), ptr_expr),
 												crearNodo("if", 
-													crearNodo("==", crearHoja("@aux"), ptr_inli_id),
+													crearNodo("==", crearHoja("@aux_inlist"), ptr_inli_id),
 													crearNodo("else", crearHoja("true"), ptr_list_exp)
 													)
 												),
@@ -225,13 +225,16 @@ lista_expresiones:	lista_expresiones PUN_Y_COM expresion {
 										}
                     | expresion {ptr_list_exp = crearNodo(";", 
 													crearNodo(":=",
-														crearHoja("@aux"),
+														crearHoja("@aux_inlist"),
 														ptr_expr),
 													crearNodo("if",
-														crearNodo("==", ptr_inli_id, crearHoja("@aux")),
+														crearNodo("==", ptr_inli_id, crearHoja("@aux_inlist")),
 														crearHoja("true")
 														)
 													);
+													strcpy(auxValor,"@aux_inlist");
+													guardarEnTablaSimbolos(TS_ID, auxValor);
+													agregarTipoSimbolo(auxValor, TS_FLOAT);
 								};
 					
 between:		BETWEEN PAR_A ID COMA COR_A expresion {ptr_betw_from = crearNodo(":=", crearHoja("@from_aux"),ptr_expr);} PUN_Y_COM expresion {ptr_betw_to = crearNodo(":=", crearHoja("@to_aux"),ptr_expr);} COR_C PAR_C {
@@ -255,6 +258,12 @@ between:		BETWEEN PAR_A ID COMA COR_A expresion {ptr_betw_from = crearNodo(":=",
 										)
 									)
 								);
+								strcpy(auxValor,"@from_aux");
+								guardarEnTablaSimbolos(TS_ID, auxValor);
+								agregarTipoSimbolo(auxValor, TS_FLOAT);
+								strcpy(auxValor,"@to_aux");
+								guardarEnTablaSimbolos(TS_ID, auxValor);
+								agregarTipoSimbolo(auxValor, TS_FLOAT);
 };
 
 termino:		termino OP_MULT factor { printf(" factor"); ptr_term=crearNodo("*",ptr_term,ptr_fact);}
