@@ -17,6 +17,7 @@ t_nodo* crearHoja( char* lexema);
 t_nodo* crearNodo( char* lexema, t_nodo* hijoIzq, t_nodo* hijoDer);
 void inOrden(t_arbol *pa, FILE *pIntermedia);
 char* replace_char(char* str, char find, char replace);
+void removeChar(char *str, char garbage);
 void invertirOperador(t_nodo* n);
 void generarAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts);
 void  printTablaDeSimbolosAsm(FILE *f);
@@ -113,6 +114,16 @@ char* replace_char(char* str, char find, char replace){
     return str;
 }
 
+void removeChar(char *str, char garbage) {
+
+    char *src, *dst;
+    for (src = dst = str; *src != '\0'; src++) {
+        *dst = *src;
+        if (*dst != garbage) dst++;
+    }
+    *dst = '\0';
+}
+
 void invertirOperador(t_nodo* n){
     if(strcmp(n->data, "==") == 0){
         strcpy(n->data, "!=");
@@ -151,7 +162,7 @@ void generarAssembler(t_arbol *pa, FILE *f_asm, struct struct_tablaSimbolos* ts)
 
 	f_temp = fopen("Temp.asm", "rt");
 
-	fprintf(f_asm, "include macros2.asm\ninclude number.asm\n.MODEL LARGE	; Modelo de Memoria\n.386	        ; Tipo de Procesador\n.STACK 200h		; Bytes en el Stack\n\n.DATA \n\n");
+	 fprintf(f_asm, "include macros2.asm\ninclude number.asm\n.MODEL LARGE	; Modelo de Memoria\n.386	        ; Tipo de Procesador\n.STACK 200h		; Bytes en el Stack\n\n.DATA \n\n");
 
 	printTablaDeSimbolosAsm(f_asm);
 
@@ -179,10 +190,12 @@ void  printTablaDeSimbolosAsm(FILE* f){
             fprintf(f, "%-30s%-30s%-30s%-s %-s\n", tablaSimbolos[i].nombre, "dd", tablaSimbolos[i].valor, ";Cte en formato ", tablaSimbolos[i].tipo);
         }
         else if(!strncmp(tablaSimbolos[i].nombre, "_", 1)) { // Es CTE
+            replace_char(tablaSimbolos[i].nombre,' ','_');
+            removeChar(tablaSimbolos[i].nombre,'"');
             if(strcmp(tablaSimbolos[i].tipo,"string") == 0)
-				fprintf(f, "%-30s%-30s \"%s\"%-26s%-30s %-s\n", replace_char(tablaSimbolos[i].nombre,' ','_'), "dd", tablaSimbolos[i].valor, "", ";Cte en formato ", tablaSimbolos[i].tipo);
+				fprintf(f, "%-30s%-30s %s%-26s%-30s %-s\n", tablaSimbolos[i].nombre, "dd", tablaSimbolos[i].valor, "", ";Cte en formato ", tablaSimbolos[i].tipo);
 			else
-				fprintf(f, "%-30s%-30s%-30s%-s %-s\n", replace_char(tablaSimbolos[i].nombre,' ','_'), "dd", tablaSimbolos[i].valor, ";Cte en formato ", tablaSimbolos[i].tipo);
+				fprintf(f, "%-30s%-30s%-30s%-s %-s\n", tablaSimbolos[i].nombre, "dd", tablaSimbolos[i].valor, ";Cte en formato ", tablaSimbolos[i].tipo);
 		}
         else if(strncmp(tablaSimbolos[i].nombre, "_", 1)) //Es variable
             fprintf(f, "%-30s%-30s%-30s%-s %-s\n", tablaSimbolos[i].nombre, "dd", "?", ";Variable", tablaSimbolos[i].tipo);

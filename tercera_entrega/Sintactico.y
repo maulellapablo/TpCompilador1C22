@@ -115,7 +115,7 @@ char * str;
 }
 
 %%
-start: programa {ptr_star = ptr_prog; inOrder(&ptr_star, f_intermedia);};
+start: programa {ptr_star = ptr_prog; inOrder(&ptr_star, f_intermedia); generarAssembler(&ptr_star, f_asm, tablaSimbolos);};
 
 programa: PROGRAM zona_declaracion algoritmo END {ptr_prog = crearNodo("programa", ptr_algo, NULL); printf("\n***** Compilacion exitosa: OK *****\n");};
 				  
@@ -162,7 +162,7 @@ sentencia:		asignacion { ptr_sent = ptr_asig; printf(" - asignacion - OK \n"); }
 ciclo:			WHILE PAR_A condicion PAR_C LLAVE_A sub_bloque LLAVE_C {ptr_cicl = crearNodo("ciclo", ptr_cond, ptr_sub_bloq);};
        
 asignacion:		ID OPAR_ASIG expresion {validarSimbolo($1); validarTipoSimbolo($1, TS_INT); ptr_asig = crearNodo(":=", crearHoja($1), ptr_expr);}
-				|ID OPAR_ASIG CTE_STRING {validarSimbolo($1); validarTipoSimbolo($1, TS_STRING); guardarEnTablaSimbolos("CTE_STRING",$1); strcpy(auxValor,"_"); strcat(auxValor, $1); ptr_fact = crearHoja(auxValor); };
+				|ID OPAR_ASIG CTE_STRING {validarSimbolo($1); validarTipoSimbolo($1, TS_STRING); guardarEnTablaSimbolos("CTE_STRING",$3); strcpy(auxValor,"_"); strcat(auxValor, $1); ptr_fact = crearHoja(auxValor); };
                   
           
 seleccion: 		IF  PAR_A condicion PAR_C THEN sub_bloque ENDIF {
