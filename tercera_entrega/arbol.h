@@ -16,8 +16,6 @@ typedef t_nodo* t_arbol;
 t_nodo* crearHoja( char* lexema);
 t_nodo* crearNodo( char* lexema, t_nodo* hijoIzq, t_nodo* hijoDer);
 void inOrden(t_arbol *pa, FILE *pIntermedia);
-char* replace_char(char* str, char find, char replace);
-void removeChar(char *str, char garbage);
 void invertirOperador(t_nodo* n);
 void generarAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts);
 void  printTablaDeSimbolosAsm(FILE *f);
@@ -104,26 +102,6 @@ void generarDOT(t_arbol* pa, FILE* stream)
 }
 
 
-// Función de ayuda, replace string
-char* replace_char(char* str, char find, char replace){
-    char *current_pos = strchr(str,find);
-    while (current_pos) {
-        *current_pos = replace;
-        current_pos = strchr(current_pos,find);
-    }
-    return str;
-}
-
-void removeChar(char *str, char garbage) {
-
-    char *src, *dst;
-    for (src = dst = str; *src != '\0'; src++) {
-        *dst = *src;
-        if (*dst != garbage) dst++;
-    }
-    *dst = '\0';
-}
-
 void invertirOperador(t_nodo* n){
     if(strcmp(n->data, "==") == 0){
         strcpy(n->data, "!=");
@@ -154,32 +132,32 @@ void invertirOperador(t_nodo* n){
 void generarAssembler(t_arbol *pa, FILE *f_asm, struct struct_tablaSimbolos* ts){
 	char Linea[300];
 
-	FILE *f_temp = fopen("Temp.asm", "wt");
+	// FILE *f_temp = fopen("Temp.asm", "wt");
 
-	while(inOrderAssembler(pa, f_temp) != pa){}
+	// while(inOrderAssembler(pa, f_temp) != pa){}
  
-	fclose(f_temp);
+	// fclose(f_temp);
 
-	f_temp = fopen("Temp.asm", "rt");
+	// f_temp = fopen("Temp.asm", "rt");
 
-	 fprintf(f_asm, "include macros2.asm\ninclude number.asm\n.MODEL LARGE	; Modelo de Memoria\n.386	        ; Tipo de Procesador\n.STACK 200h		; Bytes en el Stack\n\n.DATA \n\n");
+	fprintf(f_asm, "include macros2.asm\ninclude number.asm\n.MODEL LARGE	; Modelo de Memoria\n.386	        ; Tipo de Procesador\n.STACK 200h		; Bytes en el Stack\n\n.DATA \n\n");
 
 	printTablaDeSimbolosAsm(f_asm);
 
 	fprintf(f_asm, "\n\n.Temp\n\nmov AX,@DATA    ; Inicializa el segmento de datos\nmov DS,AX\nmov es,ax ;\n\n");
 
-	while(fgets(Linea, sizeof(Linea), f_temp))
-	{
-		fprintf(f_asm, Linea);
-	}
+	// while(fgets(Linea, sizeof(Linea), f_temp))
+	// {
+	// 	fprintf(f_asm, Linea);
+	// }
 
-	fprintf(f_asm, "\n\n\nmov ax,4c00h	; Indica que debe finalizar la ejecución\nint 21h\n\nEnd");
+	// fprintf(f_asm, "\n\n\nmov ax,4c00h	; Indica que debe finalizar la ejecución\nint 21h\n\nEnd");
 
-	fclose(f_temp);
+	// fclose(f_temp);
 
-	remove("Temp.asm");
+	// remove("Temp.asm");
 
-	fclose(f_asm);
+	// fclose(f_asm);
 }
 
 void  printTablaDeSimbolosAsm(FILE* f){
@@ -284,7 +262,7 @@ void traduccionAssembler(t_arbol* pa, FILE* f){
             sprintf(cadena,"@Aux%d",++contAux);
             fprintf(f,"FSTP %s\n",cadena);
             strcpy((*pa)->data, cadena);
-            guardarEnTablaSimbolos("float", cadena);
+            guardarEnTablaSimbolos(TS_FLOAT, cadena);
         }
         fprintf(f,"FFREE\n"); 
     }

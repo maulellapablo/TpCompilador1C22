@@ -7,6 +7,7 @@
 #define TS_INT 1
 #define TS_FLOAT 2
 #define TS_STRING 3
+#define TS_ID 4
 
 struct struct_tablaSimbolos
 {
@@ -19,53 +20,89 @@ struct struct_tablaSimbolos
 int puntero_array = 0;
 struct struct_tablaSimbolos tablaSimbolos[1000];
 
-int guardarEnTablaSimbolos(char*, char*);
+int guardarEnTablaSimbolos(int, char*);
 void escribirEnTablaSimbolos();
 void validarSimbolo(char*);
 void validarTipoSimbolo(char*, int);
+char* replace_char(char* str, char find, char replace);
+void removeChar(char *str, char garbage);
 
-int guardarEnTablaSimbolos(char* tipo, char* nombre){
+// Función de ayuda, replace string
+char* replace_char(char* str, char find, char replace){
+    char *current_pos = strchr(str,find);
+    while (current_pos) {
+        *current_pos = replace;
+        current_pos = strchr(current_pos,find);
+    }
+    return str;
+}
+
+void removeChar(char *str, char garbage) {
+
+    char *src, *dst;
+    for (src = dst = str; *src != '\0'; src++) {
+        *dst = *src;
+        if (*dst != garbage) dst++;
+    }
+    *dst = '\0';
+}
+
+int guardarEnTablaSimbolos(int tipo, char* nombre){
 	
 	char longitudConstanteString[10];
 	int i;
 	int posicion;
 	char lexema[50];
 	char aux[50];
+	char aux_valor[50];
 
-	if(strcmp(strncpy(aux, tipo, 3),"CTE")==0){
-		lexema[0]='_';
-		lexema[1]='\0';
+	strcpy(aux_valor, nombre);
+
+	replace_char(nombre,' ','_');
+	removeChar(nombre,'"');
+
+	if(tipo != TS_ID){
+		aux[0]='_';
+		aux[1]='\0';
 		//Se anexa al lexema un guion bajo al inicio
-		strcat(lexema,nombre);
+		strcat(aux,nombre);
 	}else{
-		lexema[0]='\0';
-		strcat(lexema,nombre);
+		aux[0]='\0';
+		strcat(aux,nombre);
 	}
+
+	strcpy(nombre,aux);
 	
 	//Recorremos la tabla de simbolos y en caso que el lexema ya exista, no se agrega y se retorna su posicion
 	for(i = 0; i < puntero_array; i++)
 	{
-		if(strcmp(tablaSimbolos[i].nombre, lexema) == 0)
+		if(strcmp(tablaSimbolos[i].nombre, nombre) == 0)
 		{
 			return i;
 		}
 	}
 	
+	tablaSimbolos[puntero_array].valor[0]='\0';
 	//En caso de ser una CTE, guardamos el Valor en la tabla de simbolos
-	if(strcmp(strncpy(aux, tipo, 3),"CTE")==0)
-		strcpy(tablaSimbolos[puntero_array].valor, nombre);
-	else
-		tablaSimbolos[puntero_array].valor[0]='\0';
+	if(tipo != TS_ID){
+		strcat(tablaSimbolos[puntero_array].valor, aux_valor);
+		printf("valor: %s, auxvalor:%s\n",tablaSimbolos[puntero_array].valor, aux_valor);
+	}
 		
-	strcpy(tablaSimbolos[puntero_array].nombre, lexema );
+	strcpy(tablaSimbolos[puntero_array].nombre, nombre);
 
 	tablaSimbolos[puntero_array].tipo[0]='\0';
-	if(strcmp(tipo,"CTE_ENTERA")==0)
-		strcat(tablaSimbolos[puntero_array].tipo, "int");
-	if(strcmp(tipo,"CTE_STRING")==0)
-		strcat(tablaSimbolos[puntero_array].tipo, "string");
-	if(strcmp(tipo,"CTE_REAL")==0)
-		strcat(tablaSimbolos[puntero_array].tipo, "float");
+	switch(tipo){
+		case CTE_ENTERA:
+			strcat(tablaSimbolos[puntero_array].tipo, "int");
+			break;
+		case CTE_STRING:
+			strcat(tablaSimbolos[puntero_array].tipo, "string");
+			break;
+		case CTE_REAL:
+			strcat(tablaSimbolos[puntero_array].tipo, "float");
+			break;
+	}
 
 	//En caso de ser una CTE string, se cuentan los caracteres y se guardan en la tabla de simbolos
 	if(tablaSimbolos[i].valor[0] == '\"')
@@ -105,28 +142,37 @@ void escribirEnTablaSimbolos(){
 }
 
 void validarSimbolo(char* lexema){
+	char aux[50];
+	strcpy(aux, lexema);
+	replace_char(aux,' ','_');
+	removeChar(aux,'"');
 	for(int i = 0; i < puntero_array; i++) {
-		if(strcmp(tablaSimbolos[i].nombre, lexema) == 0){
+		if(strcmp(tablaSimbolos[i].nombre, aux) == 0){
 			return;
 		}
 	}
 
-	printf("ERROR! La variable %s no se encuentra definida", lexema);
+	printf("ERROR! La variable %s no se encuentra definida", aux);
 	exit(0);
 }
 
 void validarTipoSimbolo(char* lexema, int tipo){
 	int pos = -1;
 
+	char aux[50];
+	strcpy(aux, lexema);
+	replace_char(aux,' ','_');
+	removeChar(aux,'"');
+
 	for(int i = 0; i < puntero_array; i++) {
-		if(strcmp(tablaSimbolos[i].nombre, lexema) == 0){
+		if(strcmp(tablaSimbolos[i].nombre, aux) == 0){
 			pos = i;
 			break;
 		}
 	}
 
 	if(pos == -1){
-		printf("ERROR! La variable %s no se encuentra definida", lexema);
+		printf("ERROR! La variable %s no se encuentra definida", aux);
 		exit(0);
 	}
 

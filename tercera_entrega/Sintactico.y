@@ -131,10 +131,10 @@ lista_declaracion:	lista_var DOS_PUNTOS lista_tipo {ptr_list_dec = crearNodo("de
 					| lista_declaracion lista_var DOS_PUNTOS lista_tipo {ptr_list_dec = crearNodo("lista_dec_vars", ptr_list_dec, crearNodo("dec", ptr_list_var, ptr_list_tip));};
 
 
-lista_var:		ID {guardarEnTablaSimbolos("ID",$1); strcpy(matrizVariables[contadorId],yylval.strid) ;  contadorId++;contadorVar++;
+lista_var:		ID {guardarEnTablaSimbolos(TS_ID,$1); strcpy(matrizVariables[contadorId],yylval.strid) ;  contadorId++;contadorVar++;
 					ptr_list_var = crearHoja($1);
 					}
-				| lista_var COMA ID {guardarEnTablaSimbolos("ID",$3); strcpy(matrizVariables[contadorId],yylval.strid) ; contadorId++;contadorVar++;
+				| lista_var COMA ID {guardarEnTablaSimbolos(TS_ID,$3); strcpy(matrizVariables[contadorId],yylval.strid) ; contadorId++;contadorVar++;
 									ptr_list_var = crearNodo("list_var", ptr_list_var, crearHoja($3));
 									};
 
@@ -162,7 +162,7 @@ sentencia:		asignacion { ptr_sent = ptr_asig; printf(" - asignacion - OK \n"); }
 ciclo:			WHILE PAR_A condicion PAR_C LLAVE_A sub_bloque LLAVE_C {ptr_cicl = crearNodo("ciclo", ptr_cond, ptr_sub_bloq);};
        
 asignacion:		ID OPAR_ASIG expresion {validarSimbolo($1); validarTipoSimbolo($1, TS_INT); ptr_asig = crearNodo(":=", crearHoja($1), ptr_expr);}
-				|ID OPAR_ASIG CTE_STRING {validarSimbolo($1); validarTipoSimbolo($1, TS_STRING); guardarEnTablaSimbolos("CTE_STRING",$3); strcpy(auxValor,"_"); strcat(auxValor, $1); ptr_fact = crearHoja(auxValor); };
+				|ID OPAR_ASIG CTE_STRING {validarSimbolo($1); validarTipoSimbolo($1, TS_STRING); guardarEnTablaSimbolos(TS_STRING,$3); strcpy(auxValor,"_"); strcat(auxValor, $1); ptr_fact = crearHoja(auxValor); };
                   
           
 seleccion: 		IF  PAR_A condicion PAR_C THEN sub_bloque ENDIF {
@@ -263,14 +263,14 @@ termino:		termino OP_MULT factor { printf(" factor"); ptr_term=crearNodo("*",ptr
                          
 
 factor:			ID {validarSimbolo($1); ptr_fact = crearHoja($1); }
-				|CTE_ENTERA { guardarEnTablaSimbolos("CTE_ENTERA",$1); strcpy(auxValor,"_"); strcat(auxValor, $1); ptr_fact = crearHoja(auxValor); }
-				|CTE_REAL { guardarEnTablaSimbolos("CTE_REAL",$1); strcpy(auxValor,"_"); strcat(auxValor, $1); ptr_fact = crearHoja(auxValor); }
+				|CTE_ENTERA { guardarEnTablaSimbolos(TS_INT,$1);  ptr_fact = crearHoja($1); }
+				|CTE_REAL { guardarEnTablaSimbolos(TS_FLOAT,$1);  ptr_fact = crearHoja($1); }
 				|PAR_A expresion PAR_C {;}
 				;
  
 entrada: 		READ ID {validarSimbolo($2); ptr_entr = crearHoja($2);};
 
-salida:			WRITE CTE_STRING { guardarEnTablaSimbolos("CTE_STRING",$2); ptr_sali = crearHoja($2);}
+salida:			WRITE CTE_STRING { guardarEnTablaSimbolos(TS_STRING,$2); ptr_sali = crearHoja($2);}
 				|WRITE ID {validarSimbolo($2); ptr_sali = crearHoja($2);}; 
           
           
