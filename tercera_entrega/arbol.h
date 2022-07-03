@@ -17,14 +17,14 @@ t_nodo* crearHoja( char* lexema);
 t_nodo* crearNodo( char* lexema, t_nodo* hijoIzq, t_nodo* hijoDer);
 void inOrden(t_arbol *pa, FILE *pIntermedia);
 char* replace_char(char* str, char find, char replace);
+void invertirOperador(t_nodo* n);
 void generarAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts);
 void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos *ts, FILE *f);
 t_arbol* inOrderAssembler(t_arbol *pa, FILE *f);
 int esHoja(t_arbol* pa);
-void invertirOperador(t_nodo* n);
+void traduccionAssembler(t_arbol* pa, FILE* f);
+void traduccionCond(t_arbol* pa, FILE* f, char* salto);
 
-extern struct struct_tablaSimbolos tablaSimbolos[1000]; 
-extern int puntero_array;
 int contAux = 0;
 int contSalto = 0;
 char str_aux[20];
@@ -113,6 +113,33 @@ char* replace_char(char* str, char find, char replace){
     return str;
 }
 
+void invertirOperador(t_nodo* n){
+    if(strcmp(n->data, "==") == 0){
+        strcpy(n->data, "!=");
+        return;
+    }
+    if(strcmp(n->data, "!=") == 0){
+        strcpy(n->data, "==");
+        return;
+    }
+    if(strcmp(n->data, "<") == 0){
+        strcpy(n->data, ">=");
+        return;
+    }
+    if(strcmp(n->data, ">=") == 0){
+        strcpy(n->data, "<");
+        return;
+    }
+    if(strcmp(n->data, ">") == 0){
+        strcpy(n->data, "<=");
+        return;
+    }
+    if(strcmp(n->data, "<=") == 0){
+        strcpy(n->data, ">");
+        return;
+    }
+}
+
 void generarAssembler(t_arbol *pa, FILE *f_asm, struct struct_tablaSimbolos* ts){
 	char Linea[300];
 
@@ -167,33 +194,6 @@ int esHoja(t_arbol* pa){
         return 0;
  
     return (!(*pa)->izq) && (!(*pa)->der);
-}
-
-void invertirOperador(t_nodo* n){
-    if(n->data == "=="){
-        strcpy(n->data, "!=");
-        return;
-    }
-    if(n->data == "!="){
-        strcpy(n->data, "==");
-        return;
-    }
-    if(n->data == "<"){
-        strcpy(n->data, ">=");
-        return;
-    }
-    if(n->data == ">="){
-        strcpy(n->data, "<");
-        return;
-    }
-    if(n->data == ">"){
-        strcpy(n->data, "<=");
-        return;
-    }
-    if(n->data == "<="){
-        strcpy(n->data, ">");
-        return;
-    }
 }
 
 t_arbol* inOrderAssembler(t_arbol *pa, FILE *f){
@@ -299,6 +299,5 @@ void traduccionCond(t_arbol* pa, FILE* f, char* salto){
     (*pa)->izq = NULL;
     (*pa)->der = NULL;
 }
-
 
 #endif // ARBOL_H_INCLUDED

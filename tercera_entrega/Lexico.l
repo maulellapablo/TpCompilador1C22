@@ -7,8 +7,7 @@
 
 char buffer[30];
 FILE *yyin;
-extern struct struct_tablaSimbolos tablaSimbolos[1000]; 
-extern int puntero_array;
+
 void validarCotaEntero(char*);
 void validarCotaReal(char*);
 void validarCotaCaracteres(char*);
@@ -61,10 +60,10 @@ COMENTARIOS		{COM_INI}(.)+{COM_INI}"\n"{COM_INI}(.)+{COM_FIN}
 "or"			{ return OP_LOG_OR; }
 "not"			{ return OP_LOG_NOT; } 
 
-{CTE_ENTERA}	{ validarCotaEntero(yytext); guardarEnTablaSimbolos("CTE_ENTERA",yytext); yylval.num = strdup(yytext); return CTE_ENTERA;}
-{CTE_REAL}		{ validarCotaReal(yytext); guardarEnTablaSimbolos("CTE_REAL",yytext); yylval.real = strdup(yytext); return CTE_REAL; }
-{CTE_STRING}	{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("CTE_STRING",yytext); yylval.real = strdup(yytext); return CTE_STRING; }
-{ID}			{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("ID",yytext); yylval.strid = strdup(yytext); return ID; }
+{CTE_ENTERA}	{ validarCotaEntero(yytext); yylval.num = strdup(yytext); return CTE_ENTERA;}
+{CTE_REAL}		{ validarCotaReal(yytext); yylval.real = strdup(yytext); return CTE_REAL; }
+{CTE_STRING}	{ validarCotaCaracteres(yytext); yylval.real = strdup(yytext); return CTE_STRING; }
+{ID}			{ validarCotaCaracteres(yytext); yylval.strid = strdup(yytext); return ID; }
 {COMENTARIO}	{ printf("\nComentario que sera descartado:  %s\n",yytext); }
 {COMENTARIOS}	{ printf("\nComentario anidado que sera descartado:  %s\n",yytext); }
 
@@ -126,27 +125,6 @@ void validarCotaCaracteres(char* str)
 		system("Pause");
 		exit(1);
 	}
-}
-
-void escribirEnTablaSimbolos(){
-	FILE *pf; 
-	int i;
-	pf = fopen("ts.txt","w"); 
-
-	if (pf == NULL)
-	{
-		printf("ERROR! No se pudo crear correctamente el archivo de la tabla de simbolos\n");
-	}
-
-	int ancho_tabla = fprintf(pf, "|%-30s|%-15s|%-32s|%-8s|\n", "Nombre","Tipo","Valor","Longitud");
-	for(i = 0; i < ancho_tabla-1; ++i)
-			fprintf(pf, "-");
-	fprintf(pf, "\n");
-	for (i = 0; i < puntero_array; i++)
-			fprintf(pf,"|%-30s|%-15s|%-32s|%-8s|\n", tablaSimbolos[i].nombre,tablaSimbolos[i].tipo,tablaSimbolos[i].valor,tablaSimbolos[i].longitud);
-
-
-	fclose(pf); 
 }
 
 int yyerror(void)

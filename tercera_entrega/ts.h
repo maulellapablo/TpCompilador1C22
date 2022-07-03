@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define TS_INT 1
+#define TS_FLOAT 2
+#define TS_STRING 3
+
 struct struct_tablaSimbolos
 {
 	char nombre[100];
@@ -16,6 +20,9 @@ int puntero_array = 0;
 struct struct_tablaSimbolos tablaSimbolos[1000];
 
 int guardarEnTablaSimbolos(char*, char*);
+void escribirEnTablaSimbolos();
+void validarSimbolo(char*);
+void validarTipoSimbolo(char*, int);
 
 int guardarEnTablaSimbolos(char* tipo, char* nombre){
 	
@@ -74,6 +81,70 @@ int guardarEnTablaSimbolos(char* tipo, char* nombre){
 	puntero_array++;
 	
 	return posicion;
+}
+
+void escribirEnTablaSimbolos(){
+	FILE *pf; 
+	int i;
+	pf = fopen("ts.txt","w"); 
+
+	if (pf == NULL)
+	{
+		printf("ERROR! No se pudo crear correctamente el archivo de la tabla de simbolos\n");
+	}
+
+	int ancho_tabla = fprintf(pf, "|%-30s|%-15s|%-32s|%-8s|\n", "Nombre","Tipo","Valor","Longitud");
+	for(i = 0; i < ancho_tabla-1; ++i)
+			fprintf(pf, "-");
+	fprintf(pf, "\n");
+	for (i = 0; i < puntero_array; i++)
+			fprintf(pf,"|%-30s|%-15s|%-32s|%-8s|\n", tablaSimbolos[i].nombre,tablaSimbolos[i].tipo,tablaSimbolos[i].valor,tablaSimbolos[i].longitud);
+
+
+	fclose(pf); 
+}
+
+void validarSimbolo(char* lexema){
+	for(int i = 0; i < puntero_array; i++) {
+		if(strcmp(tablaSimbolos[i].nombre, lexema) == 0){
+			return;
+		}
+	}
+
+	printf("ERROR! La variable %s no se encuentra definida", lexema);
+	exit(0);
+}
+
+void validarTipoSimbolo(char* lexema, int tipo){
+	int pos = -1;
+
+	for(int i = 0; i < puntero_array; i++) {
+		if(strcmp(tablaSimbolos[i].nombre, lexema) == 0){
+			pos = i;
+			break;
+		}
+	}
+
+	if(pos == -1){
+		printf("ERROR! La variable %s no se encuentra definida", lexema);
+		exit(0);
+	}
+
+	switch(tipo){
+		case TS_INT:
+		case TS_FLOAT:
+			if(strcmp(tablaSimbolos[pos].tipo,"string") == 0){
+				printf("ERROR! La variable %s de tipo %s no es entera o flotante!",tablaSimbolos[pos].nombre, tablaSimbolos[pos].tipo);
+				exit(0);
+			}
+			break;
+		case TS_STRING:
+			if(strcmp(tablaSimbolos[pos].tipo,"string") != 0){
+				printf("ERROR! La variable %s de tipo %s no es una string!",tablaSimbolos[pos].nombre, tablaSimbolos[pos].tipo);
+				exit(0);
+			}
+			break;
+	}
 }
 
 #endif
