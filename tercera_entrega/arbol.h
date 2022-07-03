@@ -19,7 +19,7 @@ void inOrden(t_arbol *pa, FILE *pIntermedia);
 char* replace_char(char* str, char find, char replace);
 void invertirOperador(t_nodo* n);
 void generarAssembler(t_arbol *pa, FILE *f, struct struct_tablaSimbolos* ts);
-void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos *ts, FILE *f);
+void  printTablaDeSimbolosAsm(FILE *f);
 t_arbol* inOrderAssembler(t_arbol *pa, FILE *f);
 int esHoja(t_arbol* pa);
 void traduccionAssembler(t_arbol* pa, FILE* f);
@@ -153,7 +153,7 @@ void generarAssembler(t_arbol *pa, FILE *f_asm, struct struct_tablaSimbolos* ts)
 
 	fprintf(f_asm, "include macros2.asm\ninclude number.asm\n.MODEL LARGE	; Modelo de Memoria\n.386	        ; Tipo de Procesador\n.STACK 200h		; Bytes en el Stack\n\n.DATA \n\n");
 
-	printTablaDeSimbolosAsm(ts, f_asm);
+	printTablaDeSimbolosAsm(f_asm);
 
 	fprintf(f_asm, "\n\n.Temp\n\nmov AX,@DATA    ; Inicializa el segmento de datos\nmov DS,AX\nmov es,ax ;\n\n");
 
@@ -171,21 +171,21 @@ void generarAssembler(t_arbol *pa, FILE *f_asm, struct struct_tablaSimbolos* ts)
 	fclose(f_asm);
 }
 
-void  printTablaDeSimbolosAsm(struct struct_tablaSimbolos* ts, FILE* f){
-    for(int i = 0; i < sizeof(*ts) / sizeof(struct struct_tablaSimbolos); i++){
-       if((!strncmp(ts[i].nombre, "_", 1)) && (strcmp(ts[i].tipo, "int") == 0)) //Es CTE Entera
+void  printTablaDeSimbolosAsm(FILE* f){
+    for(int i = 0; i < puntero_array; i++){
+       if((!strncmp(tablaSimbolos[i].nombre, "_", 1)) && (strcmp(tablaSimbolos[i].tipo, "int") == 0)) //Es CTE Entera
         {
-            strcat(ts[i].valor, ".00");
-            fprintf(f, "%-30s%-30s%-30s%-s %-s\n", ts[i].nombre, "dd", ts[i].valor, ";Cte en formato ", ts[i].tipo);
+            strcat(tablaSimbolos[i].valor, ".00");
+            fprintf(f, "%-30s%-30s%-30s%-s %-s\n", tablaSimbolos[i].nombre, "dd", tablaSimbolos[i].valor, ";Cte en formato ", tablaSimbolos[i].tipo);
         }
-        else if(!strncmp(ts[i].nombre, "_", 1)) { // Es CTE
-            if(strcmp(ts[i].tipo,"string") == 0)
-				fprintf(f, "%-30s%-30s \"%s\"%-26s%-30s %-s\n", replace_char(ts[i].nombre,' ','_'), "dd", ts[i].valor, "", ";Cte en formato ", ts[i].tipo);
+        else if(!strncmp(tablaSimbolos[i].nombre, "_", 1)) { // Es CTE
+            if(strcmp(tablaSimbolos[i].tipo,"string") == 0)
+				fprintf(f, "%-30s%-30s \"%s\"%-26s%-30s %-s\n", replace_char(tablaSimbolos[i].nombre,' ','_'), "dd", tablaSimbolos[i].valor, "", ";Cte en formato ", tablaSimbolos[i].tipo);
 			else
-				fprintf(f, "%-30s%-30s%-30s%-s %-s\n", replace_char(ts[i].nombre,' ','_'), "dd", ts[i].valor, ";Cte en formato ", ts[i].tipo);
+				fprintf(f, "%-30s%-30s%-30s%-s %-s\n", replace_char(tablaSimbolos[i].nombre,' ','_'), "dd", tablaSimbolos[i].valor, ";Cte en formato ", tablaSimbolos[i].tipo);
 		}
-        else if(strncmp(ts[i].nombre, "_", 1)) //Es variable
-            fprintf(f, "%-30s%-30s%-30s%-s %-s\n", ts[i].nombre, "dd", "?", ";Variable", ts[i].tipo);
+        else if(strncmp(tablaSimbolos[i].nombre, "_", 1)) //Es variable
+            fprintf(f, "%-30s%-30s%-30s%-s %-s\n", tablaSimbolos[i].nombre, "dd", "?", ";Variable", tablaSimbolos[i].tipo);
     }
 }
 
