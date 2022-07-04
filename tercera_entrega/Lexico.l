@@ -5,22 +5,12 @@
 #include <math.h>
 #include "y.tab.h"
 
-
-struct struct_tablaSimbolos{
-	char nombre[100];
-	char tipo[100];
-	char valor[50];
-	char longitud[100];
-};
 char buffer[30];
 FILE *yyin;
-int puntero_array = 0;
-struct struct_tablaSimbolos tablaSimbolos[1000];
 
 void validarCotaEntero(char*);
 void validarCotaReal(char*);
 void validarCotaCaracteres(char*);
-int guardarEnTablaSimbolos(char*, char*);
 int validarCaracter(void);
 %}
 %option noyywrap  
@@ -70,10 +60,10 @@ COMENTARIOS		{COM_INI}(.)+{COM_INI}"\n"{COM_INI}(.)+{COM_FIN}
 "or"			{ return OP_LOG_OR; }
 "not"			{ return OP_LOG_NOT; } 
 
-{CTE_ENTERA}	{ validarCotaEntero(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.num = strdup(yytext); return CTE_ENTERA;}
-{CTE_REAL}		{ validarCotaReal(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.real = strdup(yytext); return CTE_REAL; }
-{CTE_STRING}	{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("CTE",yytext); yylval.real = strdup(yytext); return CTE_STRING; }
-{ID}			{ validarCotaCaracteres(yytext); guardarEnTablaSimbolos("ID",yytext); yylval.strid = strdup(yytext); return ID; }
+{CTE_ENTERA}	{ validarCotaEntero(yytext); yylval.num = strdup(yytext); return CTE_ENTERA;}
+{CTE_REAL}		{ validarCotaReal(yytext); yylval.real = strdup(yytext); return CTE_REAL; }
+{CTE_STRING}	{ validarCotaCaracteres(yytext); yylval.real = strdup(yytext); return CTE_STRING; }
+{ID}			{ validarCotaCaracteres(yytext); yylval.strid = strdup(yytext); return ID; }
 {COMENTARIO}	{ printf("\nComentario que sera descartado:  %s\n",yytext); }
 {COMENTARIOS}	{ printf("\nComentario anidado que sera descartado:  %s\n",yytext); }
 
@@ -135,71 +125,6 @@ void validarCotaCaracteres(char* str)
 		system("Pause");
 		exit(1);
 	}
-}
-
-int guardarEnTablaSimbolos(char* tipo, char* nombre){
-	
-	char longitudConstanteString[10];
-	int i;
-	int posicion;
-	char lexema[50]; 
-	lexema[0]='_';
-	lexema[1]='\0';
-	//Se anexa al lexema un guion bajo al inicio
-	strcat(lexema,nombre);
-	
-	//Recorremos la tabla de simbolos y en caso que el lexema ya exista, no se agrega y se retorna su posicion
-	for(i = 0; i < puntero_array; i++)
-	{
-		if(strcmp(tablaSimbolos[i].nombre, lexema) == 0)
-		{
-			return i;
-		}
-	}
-	
-	//En caso de ser una CTE, guardamos el Valor en la tabla de simbolos
-	if(strcmp(tipo,"CTE")==0)
-		strcpy(tablaSimbolos[puntero_array].valor, nombre);
-	else
-		tablaSimbolos[puntero_array].valor[0]='\0';
-		
-	strcpy(tablaSimbolos[puntero_array].nombre, lexema );
-	tablaSimbolos[puntero_array].tipo[0]='\0';
-	//En caso de ser una CTE string, se cuentan los caracteres y se guardan en la tabla de simbolos
-	if(tablaSimbolos[i].valor[0] == '\"')
-	{
-		snprintf(longitudConstanteString, sizeof(longitudConstanteString), "%d", strlen(tablaSimbolos[i].valor)-2);
-		strcpy(tablaSimbolos[i].longitud,longitudConstanteString);
-	}
-	else
-		tablaSimbolos[puntero_array].longitud[0]='0';
-	
-	//Se agrega en la tabla de simbolos y se retorna su posicion
-	posicion = puntero_array;
-	puntero_array++;
-	
-	return posicion;
-}
-
-void escribirEnTablaSimbolos(){
-	FILE *pf; 
-	int i;
-	pf = fopen("ts.txt","w"); 
-
-	if (pf == NULL)
-	{
-		printf("ERROR! No se pudo crear correctamente el archivo de la tabla de simbolos\n");
-	}
-
-	int ancho_tabla = fprintf(pf, "|%-30s|%-15s|%-32s|%-8s|\n", "Nombre","Tipo","Valor","Longitud");
-	for(i = 0; i < ancho_tabla-1; ++i)
-			fprintf(pf, "-");
-	fprintf(pf, "\n");
-	for (i = 0; i < puntero_array; i++)
-			fprintf(pf,"|%-30s|%-15s|%-32s|%-8s|\n", tablaSimbolos[i].nombre,tablaSimbolos[i].tipo,tablaSimbolos[i].valor,tablaSimbolos[i].longitud);
-
-
-	fclose(pf); 
 }
 
 int yyerror(void)

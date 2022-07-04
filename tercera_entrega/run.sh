@@ -4,13 +4,13 @@ flex Lexico.l
 
 bison -dyv Sintactico.y
 
-gcc lex.yy.c  y.tab.c -o segunda 
+gcc lex.yy.c  y.tab.c -o tercera 
 
-./segunda prueba.txt
+./tercera prueba.txt
 
 dot -Tpng arbol.dot -o arbol.png
 
 rm lex.yy.c
 rm y.tab.c
 rm y.tab.h
-rm segunda
+rm tercera
