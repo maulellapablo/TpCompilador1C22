@@ -151,7 +151,7 @@ void generarAssembler(t_arbol *pa, FILE *f_asm, struct struct_tablaSimbolos* ts)
 
 	printTablaDeSimbolosAsm(f_asm);
 
-	fprintf(f_asm, "\n\n.Temp\n\nmov AX,@DATA    ; Inicializa el segmento de datos\nmov DS,AX\nmov es,ax ;\n\n");
+	fprintf(f_asm, "\n\n.CODE\n\nmov AX,@DATA    ; Inicializa el segmento de datos\nmov DS,AX\nmov es,ax ;\n\n");
 
 	while(fgets(Linea, sizeof(Linea), f_temp))
 	{
@@ -177,7 +177,7 @@ void  printTablaDeSimbolosAsm(FILE* f){
             replace_char(tablaSimbolos[i].nombre,' ','_');
             removeChar(tablaSimbolos[i].nombre,'"');
             if(strcmp(tablaSimbolos[i].tipo,"string") == 0)
-				fprintf(f, "%-30s%-30s %s%-26s%-30s %-s\n", tablaSimbolos[i].nombre, "dd", tablaSimbolos[i].valor, "", ";Cte en formato ", tablaSimbolos[i].tipo);
+				fprintf(f, "%-30s %-30s %-30s,'$', %s dup (?) %s\n", tablaSimbolos[i].nombre, "db", tablaSimbolos[i].valor, tablaSimbolos[i].longitud, ";Cte en formato ", tablaSimbolos[i].tipo);
 			else
 				fprintf(f, "%-30s%-30s%-30s%-s %-s\n", tablaSimbolos[i].nombre, "dd", tablaSimbolos[i].valor, ";Cte en formato ", tablaSimbolos[i].tipo);
 		}

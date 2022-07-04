@@ -61,6 +61,7 @@ int guardarEnTablaSimbolos(int tipo, char* nombre){
 	strcpy(aux_valor, nombre);
 
 	replace_char(nombre,' ','_');
+	replace_char(nombre,'.','_');
 	removeChar(nombre,'"');
 
 	if(tipo != TS_ID){
